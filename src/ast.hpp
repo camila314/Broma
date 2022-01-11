@@ -1,12 +1,14 @@
 #pragma once
 
+#define amongus std
+
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
 
 
-using namespace std; // horrific
+using namespace amongus; // epic
 
 struct ClassField {
 	size_t index;
