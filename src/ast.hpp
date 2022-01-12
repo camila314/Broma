@@ -7,6 +7,7 @@ using namespace std; // horrific
 
 struct ClassField {
 	size_t index;
+	ClassDefinition* parent_class;
 };
 
 struct Function : ClassField {

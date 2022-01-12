@@ -103,7 +103,8 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 		if (t.type != kComma)
 			cacerr("Expected comma, found %s.\n", t.slice.c_str());
 	}
-
+	myFunction.parent_class = &c;
+	myFunction.index = c.in_order.size();
 	c.functions.push_back(myFunction);
 	c.in_order.push_back(&c.functions.back());
 }
@@ -145,6 +146,8 @@ void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens
 		}
 	} else next_expect(tokens, kSemi, ";");
 
+	myMember.parent_class = &c;
+	myMember.index = c.in_order.size();
 	c.members.push_back(myMember);
 	c.in_order.push_back(&c.members.back());
 }
@@ -172,6 +175,8 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 
 	if (peek(tokens).type == kInlineExpr) {
 		Inline i;
+		i.parent_class = &c;
+		i.index = c.in_order.size();
 		i.inlined = next(tokens).slice;
 		c.inlines.push_back(i);
 		c.in_order.push_back(&c.inlines.back());
