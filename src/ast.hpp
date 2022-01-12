@@ -8,6 +8,8 @@
 
 using namespace std; // horrific
 
+struct ClassDefinition;
+
 struct ClassField {
 	size_t index;
 	ClassDefinition* parent_class;
