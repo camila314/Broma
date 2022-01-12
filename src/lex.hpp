@@ -10,14 +10,14 @@
 using namespace std; // evil, right?
 
 enum TokenType {
-	kIdent = 0,
-	kParenR = 1,
-	kParenL = 2,
-	kTemplateExpr = 3,
-	kBraceR = 4,
-	kBraceL = 5,
-	kBrackL = 6,
-	kBrackR = 7,
+	kIdent,
+	kParenR,
+	kParenL,
+	kTemplateExpr,
+	kBraceR,
+	kBraceL,
+	kBrackL,
+	kBrackR,
 	kAttrL,
 	kAttrR,
 	kSemi,
