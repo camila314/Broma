@@ -158,19 +158,12 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 		attrib = parseAttribute(tokens);
 	}
 
-	bool virt = false;
-	bool stat = false;
+	FunctionType fn_type = kRegularFunction;
 
 	if (!next_if_type(kVirtual, tokens)) {
-		virt = true;
-		if (!next_if_type(kStatic, tokens)) {
-			stat = true;
-		}
+		fn_type = kVirtualFunction;
 	} else if (!next_if_type(kStatic, tokens)) {
-		stat = true;
-		if (!next_if_type(kVirtual, tokens)) {
-			virt = true;
-		}
+		fn_type = kStaticFunction;
 	}
 
 	if (peek(tokens).type == kInlineExpr) {
@@ -195,6 +188,8 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 			case kTemplateExpr:
 			case kQualifier:
 			case kDtor:
+				if (t.type == kDtor)
+					fn_type = kDestructor;
 				return_name.push_back(t);
 				next(tokens);
 				break;
@@ -214,6 +209,9 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 	string varName = return_name.back().slice;
 	return_name.pop_back();
 	string return_type;
+
+	if (return_name.size() == 0 && fn_type == kRegularFunction)
+		fn_type = kConstructor;
 	for (auto& i : return_name)
 		return_type += i.slice;
 
@@ -221,15 +219,14 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 		Function myFunction;
 		myFunction.return_type = return_type;
 		myFunction.android_mangle = attrib;
-		myFunction.is_virtual = virt;
-		myFunction.is_static = stat;
+		myFunction.function_type = fn_type;
 		myFunction.name = varName;
 		return parseFunction(c, myFunction, tokens);
 	}
 
-	if (virt)
+	if (fn_type == kVirtualFunction)
 		cacerr("Unexpected virtual keyword\n")
-	if (stat)
+	if (fn_type == kStaticFunction)
 		cacerr("Unexpected static keyword\n")
 	return parseMember(c, return_type, varName, tokens);
 }

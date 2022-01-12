@@ -15,10 +15,17 @@ struct ClassField {
 	ClassDefinition* parent_class;
 };
 
+enum FunctionType {
+	kVirtualFunction=0,
+	kStaticFunction=1,
+	kRegularFunction=2,
+	kConstructor=11,
+	kDestructor=12
+};
+
 struct Function : ClassField {
-	bool is_virtual;
-	bool is_static;
 	bool is_const;
+	FunctionType function_type;
 
 	string return_type;
 	string name;
@@ -59,7 +66,6 @@ struct ClassDefinition {
 
 struct Root {
 	unordered_map<string, ClassDefinition> classes;
-	vector<string> parsed_classes; // to be used differently per method
 
 	ClassDefinition& addClass(string& name) {
 		classes[name] = ClassDefinition();
