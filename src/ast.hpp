@@ -19,6 +19,7 @@ enum FunctionType {
 	kVirtualFunction=0,
 	kStaticFunction=1,
 	kRegularFunction=2,
+	//kStructorCutoff=10, // used for comparisons
 	kConstructor=11,
 	kDestructor=12
 };
@@ -67,7 +68,7 @@ struct ClassDefinition {
 struct Root {
 	unordered_map<string, ClassDefinition> classes;
 
-	ClassDefinition& addClass(string& name) {
+	ClassDefinition& addClass(string name) {
 		classes[name] = ClassDefinition();
 		classes[name].name = name;
 		return classes[name];

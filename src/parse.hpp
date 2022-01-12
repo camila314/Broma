@@ -72,7 +72,10 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 	while (next_if_type(kParenR, tokens)) {
 		string args;
 		while (next_if_type(kComma, tokens) && peek(tokens).type != kParenR) {
-			args += next(tokens).slice;
+			auto t = next(tokens);
+			args += t.slice;
+			if ((t.type == kIdent || t.type == kConst) && (peek(tokens).type == kIdent || peek(tokens).type == kConst))
+				args += " ";
 		}
 		if (args.size() == 0)
 			continue;
@@ -103,7 +106,17 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 		if (t.type != kComma)
 			cacerr("Expected comma, found %s.\n", t.slice.c_str());
 	}
+
+	if (myFunction.function_type == kConstructor) {
+		myFunction.name = "constructor";
+		myFunction.return_type = "void";
+	}
+	if (myFunction.function_type == kDestructor) {
+		myFunction.name = "destructor";
+		myFunction.return_type = "void";
+	}
 	myFunction.parent_class = &c;
+	//cerr << "important class name is " << c.name << endl;
 	myFunction.index = c.in_order.size();
 	c.functions.push_back(myFunction);
 	c.in_order.push_back(&c.functions.back());
@@ -232,9 +245,9 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 }
 
 void parseClass(Root& r, Tokens& tokens) {
-	ClassDefinition myClass;
 	next_expect(tokens, kClass, "'class'");
-	myClass.name = parseQualifiedName(tokens);
+
+	ClassDefinition& myClass = r.addClass(parseQualifiedName(tokens));
 
 	if (!next_if_type(kColon, tokens)) {
 		loop {
@@ -252,7 +265,6 @@ void parseClass(Root& r, Tokens& tokens) {
 		parseField(myClass, tokens);
 	}
 
-	r.classes[myClass.name] = myClass;
 }
 
 Root parseTokens(vector<Token> ts) {
