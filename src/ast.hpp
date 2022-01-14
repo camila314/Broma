@@ -4,14 +4,21 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <iostream>
 
 
 using namespace std; // horrific
 
 struct ClassDefinition;
 
+enum FieldType {
+	kFunction=0,
+	kMember=1,
+	kInline=2
+};
+
 struct ClassField {
-	size_t index;
+	FieldType field_type;
 	ClassDefinition* parent_class;
 };
 
@@ -24,6 +31,7 @@ enum FunctionType {
 };
 
 struct Function : ClassField {
+	Function() : is_const(), return_type(), name(), args(), binds(), android_mangle(), index() {}
 	bool is_const;
 	FunctionType function_type;
 
@@ -33,9 +41,11 @@ struct Function : ClassField {
 
 	string binds[3]; // mac, windows, ios (android has all symbols included). No binding = no string. Stored as a string because no math is done on it
 	string android_mangle; // only sometimes matters. empty if irrelevant
+	size_t index;
 };
 
 struct Member : ClassField {
+	Member() : type(), name(), hardcode(), hardcodes(), count() {}
 	string type;
 	string name;
 	bool hardcode;
@@ -44,6 +54,7 @@ struct Member : ClassField {
 };
 
 struct Inline : ClassField {
+	Inline() : inlined() {}
 	string inlined;
 };
 
@@ -61,6 +72,24 @@ struct ClassDefinition {
 			cacerr("Duplicate superclass %s for class %s\n", sclass.c_str(), name.c_str());
 		}
 		superclasses.push_back(sclass);
+	}
+
+	template<typename T>
+	void addField(T& field) {
+		field.parent_class = this;
+		if constexpr (is_same_v<Function, T>) {
+			field.index = functions.size();
+			field.field_type = FieldType::kFunction;
+			functions.push_back(field);
+		}
+		if constexpr (is_same_v<Member, T>) {
+			field.field_type = FieldType::kMember;
+			members.push_back(field);
+		}
+		if constexpr (is_same_v<Inline, T>) {
+			field.field_type = FieldType::kInline;
+			inlines.push_back(field);
+		}
 	}
 };
 
