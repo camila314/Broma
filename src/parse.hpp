@@ -251,7 +251,8 @@ void parseClass(Root& r, Tokens& tokens) {
 
 	if (!next_if_type(kColon, tokens)) {
 		loop {
-			myClass.addSuperclass(parseQualifiedName(tokens));
+			auto sc = parseQualifiedName(tokens);
+			myClass.addSuperclass(sc);
 			//auto t = next(tokens);
 			if (!next_if_type(kBraceL, tokens)) 
 				break;

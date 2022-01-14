@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <algorithm>
-
+#include <iostream>
 
 using namespace std; // horrific
 
@@ -13,6 +14,8 @@ struct ClassDefinition;
 struct ClassField {
 	size_t index;
 	ClassDefinition* parent_class;
+
+	virtual ~ClassField() {}
 };
 
 enum FunctionType {
@@ -52,10 +55,10 @@ struct Root;
 struct ClassDefinition {
 	string name;
 	vector<string> superclasses;
-	vector<Function> functions;
-	vector<Member> members;
-	vector<Inline> inlines;
-	vector<ClassField*> in_order;
+	vector<size_t> function_indexes;
+	vector<size_t> member_indexes;
+	vector<size_t> inline_indexes;
+	vector<char[sizeof Function]> in_order; //lol xd
 
 	void addSuperclass(string sclass) {
 		if (std::find(superclasses.begin(), superclasses.end(), sclass) != superclasses.end()) {
@@ -66,7 +69,7 @@ struct ClassDefinition {
 };
 
 struct Root {
-	unordered_map<string, ClassDefinition> classes;
+	map<string, ClassDefinition> classes;
 
 	ClassDefinition& addClass(string name) {
 		classes[name] = ClassDefinition();
