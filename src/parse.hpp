@@ -74,10 +74,10 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 	while (next_if_type(kParenR, tokens)) {
 		string args;
 		while (next_if_type(kComma, tokens) && peek(tokens).type != kParenR) {
-			string token = next(tokens).slice;
-			if (token == "const") token = " const ";
-			if (token == "unsigned") token = " unsigned ";
-			args += token;
+			auto t = next(tokens);
+			args += t.slice;
+			if ((t.type == kIdent || t.type == kConst) && (peek(tokens).type == kIdent || peek(tokens).type == kConst))
+				args += " ";
 		}
 		if (args.size() == 0)
 			continue;
@@ -215,11 +215,15 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 
 	if (return_name.size() == 0 && fn_type == kRegularFunction)
 		fn_type = kConstructor;
-	for (auto& i : return_name) {
-		string token = i.slice;
-		if (token == "const") token = " const ";
-		if (token == "unsigned") token = " unsigned ";
-		return_type += token;
+	for (size_t i = 0; i < return_name.size(); ++i) {
+		auto& t = return_name[i];
+		return_type += t.slice;
+		if (i+1 < return_name.size()) {
+			auto& p = return_name[i+1];
+			if ((t.type == kIdent || t.type == kConst) && (p.type == kIdent || p.type == kConst))
+				return_type += " ";
+		}
+		
 	}
 		
 	if (peek(tokens).type == kParenL) {
