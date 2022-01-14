@@ -130,6 +130,7 @@ void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens
 	}
 
 	if (!next_if_type(kEqual, tokens)) {
+		myMember.hardcode = true;
 		for (int k = 0; k < 4; ++k) {
 			if (k == 3)
 				cacerr("Maximum of 3 hardcodes allowed\n");
