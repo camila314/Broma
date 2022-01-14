@@ -6,6 +6,8 @@
 #include "parse.hpp"
 #include <fstream>
 
+using std::ifstream, std::ofstream;
+
 Root parseFile(char const* fname) {
 	ifstream in(fname);
 	string contents;

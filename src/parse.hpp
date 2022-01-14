@@ -4,6 +4,7 @@
 #include "ast.hpp"
 #include <queue>
 
+using std::queue;
 
 #define loop while(true)
 using Tokens = queue<Token>;

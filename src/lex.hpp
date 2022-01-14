@@ -7,7 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "err.hpp"
-using namespace std; // evil, right?
+using std::stringstream;
+using std::string;
 
 enum TokenType {
 	kIdent,

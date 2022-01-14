@@ -6,8 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-
-using namespace std; // horrific
+using std::vector, std::unordered_map, std::string, std::is_same_v, std::cout, std::cin, std::endl;
 
 struct ClassDefinition;
 
