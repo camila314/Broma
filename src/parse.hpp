@@ -4,6 +4,8 @@
 #include "ast.hpp"
 #include <queue>
 
+using std::queue;
+
 #define loop while(true)
 using Tokens = queue<Token>;
 
@@ -106,20 +108,9 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 		if (t.type != kComma)
 			cacerr("Expected comma, found %s.\n", t.slice.c_str());
 	}
-
-	if (myFunction.function_type == kConstructor) {
-		myFunction.name = "constructor";
-		myFunction.return_type = "void";
-	}
-	if (myFunction.function_type == kDestructor) {
-		myFunction.name = "destructor";
-		myFunction.return_type = "void";
-	}
-	myFunction.parent_class = &c;
-	//cerr << "important class name is " << c.name << endl;
-	myFunction.index = c.in_order.size();
-	c.functions.push_back(myFunction);
-	c.in_order.push_back(&c.functions.back());
+	// myFunction.parent_class = &c;
+	// myFunction.index = c.in_order.size();
+	c.addField(myFunction);
 }
 
 void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens) {
@@ -159,10 +150,9 @@ void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens
 		}
 	} else next_expect(tokens, kSemi, ";");
 
-	myMember.parent_class = &c;
-	myMember.index = c.in_order.size();
-	c.members.push_back(myMember);
-	c.in_order.push_back(&c.members.back());
+	// myMember.parent_class = &c;
+	// myMember.index = c.in_order.size();
+	c.addField(myMember);
 }
 
 void parseField(ClassDefinition& c, Tokens& tokens) {
@@ -181,11 +171,11 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 
 	if (peek(tokens).type == kInlineExpr) {
 		Inline i;
-		i.parent_class = &c;
-		i.index = c.in_order.size();
-		i.inlined = next(tokens).slice;
-		c.inlines.push_back(i);
-		c.in_order.push_back(&c.inlines.back());
+		// i.parent_class = &c;
+		// i.index = c.in_order.size();
+		string inlined = next(tokens).slice;
+		i.inlined = inlined.substr(1, inlined.size());
+		c.addField(i);
 		return;
 	}
 
@@ -225,15 +215,24 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 
 	if (return_name.size() == 0 && fn_type == kRegularFunction)
 		fn_type = kConstructor;
-	for (auto& i : return_name)
-		return_type += i.slice;
-
+	for (size_t i = 0; i < return_name.size(); ++i) {
+		auto& t = return_name[i];
+		return_type += t.slice;
+		if (i+1 < return_name.size()) {
+			auto& p = return_name[i+1];
+			if ((t.type == kIdent || t.type == kConst) && (p.type == kIdent || p.type == kConst))
+				return_type += " ";
+		}
+		
+	}
+		
 	if (peek(tokens).type == kParenL) {
 		Function myFunction;
 		myFunction.return_type = return_type;
 		myFunction.android_mangle = attrib;
 		myFunction.function_type = fn_type;
 		myFunction.name = varName;
+		if (fn_type == kDestructor) myFunction.name = "~" + myFunction.name;
 		return parseFunction(c, myFunction, tokens);
 	}
 
@@ -246,8 +245,8 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 
 void parseClass(Root& r, Tokens& tokens) {
 	next_expect(tokens, kClass, "'class'");
-
-	ClassDefinition& myClass = r.addClass(parseQualifiedName(tokens));
+	string name = parseQualifiedName(tokens);
+	ClassDefinition& myClass = r.addClass(name);
 
 	if (!next_if_type(kColon, tokens)) {
 		loop {

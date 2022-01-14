@@ -7,7 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "err.hpp"
-using namespace std; // evil, right?
+using std::stringstream;
+using std::string;
 
 enum TokenType {
 	kIdent,
@@ -174,6 +175,7 @@ void parsePreproc(stringstream& stream) {
 			cout << fname << endl;
 			cacerr("Could not include file %s\n", fname.c_str());
 		}
+		// why c file reading
 
 		fseek(fptr, 0, SEEK_END);
 		long fsize = ftell(fptr);
