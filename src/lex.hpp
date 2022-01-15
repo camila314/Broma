@@ -46,26 +46,26 @@ struct Token {
 };
 
 Token parseIdent(stringstream& stream) {
-    while (stream.peek() == ' ') {
-        stream.get();
-    }
+	while (stream.peek() == ' ') {
+		stream.get();
+	}
 
-    string slice;
-    do {
-        char j = (stream).peek();
-        bool real = false;
+	string slice;
+	do {
+		char j = (stream).peek();
+		bool real = false;
 
-        if (isalnum(j) || j == '_') {
-            slice += j;
-            real = true;
-        }
+		if (isalnum(j) || j == '_') {
+			slice += j;
+			real = true;
+		}
 
-        if (!real)
-            return {.type=kIdent, slice};
-        stream.get();
-    } while (stream);
+		if (!real)
+			return {.type=kIdent, slice};
+		stream.get();
+	} while (stream);
 
-    cacerr("Unexpected EOF\n");
+	cacerr("Unexpected EOF\n");
 }
 
 void parseString(stringstream& stream, string& slice, char start) {
