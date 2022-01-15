@@ -68,10 +68,11 @@ struct ClassDefinition {
 	vector<ClassField*> in_order;
 
 	void addSuperclass(string sclass) {
-		if (std::find(superclasses.begin(), superclasses.end(), sclass) != superclasses.end()) {
-			cacerr("Duplicate superclass %s for class %s\n", sclass.c_str(), name.c_str());
+		if (std::find(superclasses.begin(), superclasses.end(), sclass) == superclasses.end()) {
+			superclasses.push_back(sclass);	
 		}
-		superclasses.push_back(sclass);
+		// intentional
+		// else cacerr("Duplicate superclass %s for class %s\n", sclass.c_str(), name.c_str());
 	}
 
 	template<typename T>
@@ -97,8 +98,10 @@ struct Root {
 	unordered_map<string, ClassDefinition> classes;
 
 	ClassDefinition& addClass(string name) {
-		classes[name] = ClassDefinition();
-		classes[name].name = name;
+		if (classes.find(name) == classes.end()) {
+			classes[name] = ClassDefinition();
+			classes[name].name = name;
+		}
 		return classes[name];
 	}
 };
