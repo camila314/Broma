@@ -61,7 +61,7 @@ Token parseIdent(stringstream& stream) {
         }
 
         if (!real)
-            return {.type=kIdent, slice};
+            return {.type=kIdent, .slice=slice};
         stream.get();
     } while (stream);
 
