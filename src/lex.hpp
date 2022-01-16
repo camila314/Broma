@@ -55,13 +55,13 @@ Token parseIdent(stringstream& stream) {
         char j = (stream).peek();
         bool real = false;
 
-        if (isalnum(j) || j == '_') {
+        if ((j >= -1 && isalnum(j)) || j == '_') {
             slice += j;
             real = true;
         }
 
         if (!real)
-            return {.type=kIdent, slice};
+            return {kIdent, slice};
         stream.get();
     } while (stream);
 
