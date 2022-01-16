@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: compile test
-      run: g++ test/test.cpp -std=c++17
+      run: g++ test/test.cpp -std=c++17 -Wall -pedantic
     - name: run test
       run: ./a.out
