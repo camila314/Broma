@@ -4,6 +4,8 @@
 #include "ast.hpp"
 #include <queue>
 
+using std::queue;
+
 #define loop while(true)
 using Tokens = queue<Token>;
 
@@ -72,7 +74,10 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 	while (next_if_type(kParenR, tokens)) {
 		string args;
 		while (next_if_type(kComma, tokens) && peek(tokens).type != kParenR) {
-			args += next(tokens).slice;
+			auto t = next(tokens);
+			args += t.slice;
+			if ((t.type == kIdent || t.type == kConst) && (peek(tokens).type == kIdent || peek(tokens).type == kConst))
+				args += " ";
 		}
 		if (args.size() == 0)
 			continue;
@@ -82,30 +87,32 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 
 	if (!next_if_type(kConst, tokens))
 		myFunction.is_const = true;
-	next_expect(tokens, kEqual, "=");
+	// next_expect(tokens, kEqual, "=");
 
-	for (int k = 0; k < 4; ++k) {
-		if (k == 3)
-			cacerr("Maximum of 3 binds allowed\n");
+	if (!next_if_type(kEqual, tokens)) {
+		for (int k = 0; k < 4; ++k) {
+			if (k == 3)
+				cacerr("Maximum of 3 binds allowed\n");
 
-		auto t = peek(tokens);
-		if (t.type == kComma)
-			myFunction.binds[k] = "";
-		else if (t.type == kAddress) {
-			next(tokens);
-			myFunction.binds[k] = t.slice;
-		} else 
-			cacerr("Expected address, found %s\n", t.slice.c_str());
+			auto t = peek(tokens);
+			if (t.type == kComma)
+				myFunction.binds[k] = "";
+			else if (t.type == kAddress) {
+				next(tokens);
+				myFunction.binds[k] = t.slice;
+			} else 
+				cacerr("Expected address, found %s\n", t.slice.c_str());
 
-		t = next(tokens);
-		if (t.type == kSemi)
-			break;
-		if (t.type != kComma)
-			cacerr("Expected comma, found %s.\n", t.slice.c_str());
-	}
-
-	c.functions.push_back(myFunction);
-	c.in_order.push_back(&c.functions.back());
+			t = next(tokens);
+			if (t.type == kSemi)
+				break;
+			if (t.type != kComma)
+				cacerr("Expected comma, found %s.\n", t.slice.c_str());
+		}
+	} else next_expect(tokens, kSemi, ";");
+	// myFunction.parent_class = &c;
+	// myFunction.index = c.in_order.size();
+	c.addField(myFunction);
 }
 
 void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens) {
@@ -125,6 +132,7 @@ void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens
 	}
 
 	if (!next_if_type(kEqual, tokens)) {
+		myMember.hardcode = true;
 		for (int k = 0; k < 4; ++k) {
 			if (k == 3)
 				cacerr("Maximum of 3 hardcodes allowed\n");
@@ -145,8 +153,9 @@ void parseMember(ClassDefinition& c, string type, string varName, Tokens& tokens
 		}
 	} else next_expect(tokens, kSemi, ";");
 
-	c.members.push_back(myMember);
-	c.in_order.push_back(&c.members.back());
+	// myMember.parent_class = &c;
+	// myMember.index = c.in_order.size();
+	c.addField(myMember);
 }
 
 void parseField(ClassDefinition& c, Tokens& tokens) {
@@ -155,26 +164,21 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 		attrib = parseAttribute(tokens);
 	}
 
-	bool virt = false;
-	bool stat = false;
+	FunctionType fn_type = kRegularFunction;
 
 	if (!next_if_type(kVirtual, tokens)) {
-		virt = true;
-		if (!next_if_type(kStatic, tokens)) {
-			stat = true;
-		}
+		fn_type = kVirtualFunction;
 	} else if (!next_if_type(kStatic, tokens)) {
-		stat = true;
-		if (!next_if_type(kVirtual, tokens)) {
-			virt = true;
-		}
+		fn_type = kStaticFunction;
 	}
 
 	if (peek(tokens).type == kInlineExpr) {
 		Inline i;
-		i.inlined = next(tokens).slice;
-		c.inlines.push_back(i);
-		c.in_order.push_back(&c.inlines.back());
+		// i.parent_class = &c;
+		// i.index = c.in_order.size();
+		string inlined = next(tokens).slice;
+		i.inlined = inlined.substr(1, inlined.size());
+		c.addField(i);
 		return;
 	}
 
@@ -190,6 +194,8 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 			case kTemplateExpr:
 			case kQualifier:
 			case kDtor:
+				if (t.type == kDtor)
+					fn_type = kDestructor;
 				return_name.push_back(t);
 				next(tokens);
 				break;
@@ -209,34 +215,55 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 	string varName = return_name.back().slice;
 	return_name.pop_back();
 	string return_type;
-	for (auto& i : return_name)
-		return_type += i.slice;
 
+	// sorry for adding logic to the parser cami <3
+	if (return_name.size() == 0) {
+		string qualifiedName = c.name;
+		if (c.name.rfind("::") != string::npos) {
+			qualifiedName = c.name.substr(c.name.rfind("::")+2);
+			return_type = "auto";
+		}
+		else return_type = "void";
+		if (qualifiedName == varName && fn_type == kRegularFunction) fn_type = kConstructor;
+	}
+	
+	for (size_t i = 0; i < return_name.size(); ++i) {
+		auto& t = return_name[i];
+		return_type += t.slice;
+		if (i+1 < return_name.size()) {
+			auto& p = return_name[i+1];
+			if ((t.type == kIdent || t.type == kConst) && (p.type == kIdent || p.type == kConst))
+				return_type += " ";
+		}
+		
+	}
+		
 	if (peek(tokens).type == kParenL) {
 		Function myFunction;
 		myFunction.return_type = return_type;
 		myFunction.android_mangle = attrib;
-		myFunction.is_virtual = virt;
-		myFunction.is_static = stat;
+		myFunction.function_type = fn_type;
 		myFunction.name = varName;
+		if (fn_type == kDestructor) myFunction.name = "~" + myFunction.name;
 		return parseFunction(c, myFunction, tokens);
 	}
 
-	if (virt)
+	if (fn_type == kVirtualFunction)
 		cacerr("Unexpected virtual keyword\n")
-	if (stat)
+	if (fn_type == kStaticFunction)
 		cacerr("Unexpected static keyword\n")
 	return parseMember(c, return_type, varName, tokens);
 }
 
 void parseClass(Root& r, Tokens& tokens) {
-	ClassDefinition myClass;
 	next_expect(tokens, kClass, "'class'");
-	myClass.name = parseQualifiedName(tokens);
+	string name = parseQualifiedName(tokens);
+	ClassDefinition& myClass = r.addClass(name);
 
 	if (!next_if_type(kColon, tokens)) {
 		loop {
-			myClass.addSuperclass(parseQualifiedName(tokens));
+			auto sc = parseQualifiedName(tokens);
+			myClass.addSuperclass(sc);
 			//auto t = next(tokens);
 			if (!next_if_type(kBraceL, tokens)) 
 				break;
@@ -250,7 +277,6 @@ void parseClass(Root& r, Tokens& tokens) {
 		parseField(myClass, tokens);
 	}
 
-	r.classes[myClass.name] = myClass;
 }
 
 Root parseTokens(vector<Token> ts) {
