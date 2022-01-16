@@ -87,27 +87,29 @@ void parseFunction(ClassDefinition& c, Function myFunction, Tokens& tokens) {
 
 	if (!next_if_type(kConst, tokens))
 		myFunction.is_const = true;
-	next_expect(tokens, kEqual, "=");
+	// next_expect(tokens, kEqual, "=");
 
-	for (int k = 0; k < 4; ++k) {
-		if (k == 3)
-			cacerr("Maximum of 3 binds allowed\n");
+	if (!next_if_type(kEqual, tokens)) {
+		for (int k = 0; k < 4; ++k) {
+			if (k == 3)
+				cacerr("Maximum of 3 binds allowed\n");
 
-		auto t = peek(tokens);
-		if (t.type == kComma)
-			myFunction.binds[k] = "";
-		else if (t.type == kAddress) {
-			next(tokens);
-			myFunction.binds[k] = t.slice;
-		} else 
-			cacerr("Expected address, found %s\n", t.slice.c_str());
+			auto t = peek(tokens);
+			if (t.type == kComma)
+				myFunction.binds[k] = "";
+			else if (t.type == kAddress) {
+				next(tokens);
+				myFunction.binds[k] = t.slice;
+			} else 
+				cacerr("Expected address, found %s\n", t.slice.c_str());
 
-		t = next(tokens);
-		if (t.type == kSemi)
-			break;
-		if (t.type != kComma)
-			cacerr("Expected comma, found %s.\n", t.slice.c_str());
-	}
+			t = next(tokens);
+			if (t.type == kSemi)
+				break;
+			if (t.type != kComma)
+				cacerr("Expected comma, found %s.\n", t.slice.c_str());
+		}
+	} else next_expect(tokens, kSemi, ";");
 	// myFunction.parent_class = &c;
 	// myFunction.index = c.in_order.size();
 	c.addField(myFunction);
@@ -214,8 +216,17 @@ void parseField(ClassDefinition& c, Tokens& tokens) {
 	return_name.pop_back();
 	string return_type;
 
-	if (return_name.size() == 0 && fn_type == kRegularFunction)
-		fn_type = kConstructor;
+	// sorry for adding logic to the parser cami <3
+	if (return_name.size() == 0) {
+		string qualifiedName = c.name;
+		if (c.name.rfind("::") != string::npos) {
+			qualifiedName = c.name.substr(c.name.rfind("::")+2);
+			return_type = "auto";
+		}
+		else return_type = "void";
+		if (qualifiedName == varName && fn_type == kRegularFunction) fn_type = kConstructor;
+	}
+	
 	for (size_t i = 0; i < return_name.size(); ++i) {
 		auto& t = return_name[i];
 		return_type += t.slice;
@@ -251,7 +262,8 @@ void parseClass(Root& r, Tokens& tokens) {
 
 	if (!next_if_type(kColon, tokens)) {
 		loop {
-			myClass.addSuperclass(parseQualifiedName(tokens));
+			auto sc = parseQualifiedName(tokens);
+			myClass.addSuperclass(sc);
 			//auto t = next(tokens);
 			if (!next_if_type(kBraceL, tokens)) 
 				break;
