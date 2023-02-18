@@ -21,7 +21,7 @@ namespace broma {
 			one<')'>
 		> {};
 
-	struct docs_attribute : basic_attribute<TAO_PEGTL_KEYWORD("docs"), string_literal> {};
+	struct docs_attribute : basic_attribute<TAO_PEGTL_KEYWORD("docs"), tagged_rule<docs_attribute, string_literal>> {};
 	struct depends_attribute : basic_attribute<TAO_PEGTL_KEYWORD("depends"), tagged_rule<depends_attribute, qualified>> {};
 
 	struct attribute : 
@@ -35,6 +35,14 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_class.depends.push_back(input.string());
+		}
+	};
+
+	template <>
+	struct run_action<tagged_rule<docs_attribute, string_literal>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_fn_begin.docs = input.string().substr(1, input.string().size() - 1);
 		}
 	};
 } // namespace broma
