@@ -49,6 +49,7 @@ namespace broma {
 	$keyword(const);
 	$keyword(static);
 	$keyword(virtual);
+	$keyword(callback);
 	$keyword(inline);
 	$keyword(class);
 	$keyword(struct);

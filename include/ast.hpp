@@ -40,6 +40,7 @@ struct FunctionBegin {
 	std::vector<std::pair<Type, std::string>> args;
 	bool is_const = false;
 	bool is_virtual = false;
+	bool is_callback = false;
 	bool is_static = false;
 	std::string docs;
 	std::string name;

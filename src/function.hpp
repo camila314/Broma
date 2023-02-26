@@ -23,7 +23,7 @@ namespace broma {
 
 			// not ctor, dtor
 			if_then_must<
-				sor<keyword_static, keyword_virtual>,
+				sor<keyword_static, keyword_virtual, keyword_callback>,
 				$named_rule("fn_normal", success),
 				sep,
 				tagged_rule<function_begin, type>,
@@ -121,6 +121,14 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_fn_begin.is_virtual = true;
+		}
+	};
+
+	template <>
+	struct run_action<keyword_callback> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_fn_begin.is_callback = true;
 		}
 	};
 
