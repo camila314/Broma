@@ -46,21 +46,20 @@ namespace broma {
 		}
 	};
 
-
 	struct class_statement : 
 		seq<
 			opt<attribute>,
 			sep,
 			must<keyword_class>,
 			whitespace,
-			must<$named_rule("class name", qualified)>,
+			must<named_rule("class name", qualified)>,
 			sep,
 			opt_must<
 				one<':'>,
 				sep,
 				list<seq<
 					sep,
-					$named_rule("superclass", qualified),
+					named_rule("superclass", qualified),
 					sep
 				>, one<','>>
 			>,
@@ -70,7 +69,7 @@ namespace broma {
 		> {};
 
 	template <>
-	struct run_action<$named_rule("superclass", qualified)> {
+	struct run_action<named_rule("superclass", qualified)> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			if (scratch->wip_class.name == input.string())
@@ -82,7 +81,7 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<$named_rule("class name", qualified)> {
+	struct run_action<named_rule("class name", qualified)> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_class.name = input.string();

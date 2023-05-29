@@ -14,7 +14,7 @@ namespace broma {
 		seq<rule_begin<function_begin>, opt<attribute>, sep, sor<
 			// ctor, dtor
 			seq<
-				$named_rule("structor", success),
+				named_rule("structor", success),
 				opt<pad_space<keyword_virtual>>,
 				opt<tagged_rule<function_begin, one<'~'>>>,
 				tagged_rule<function_begin, identifier>,
@@ -24,7 +24,7 @@ namespace broma {
 			// not ctor, dtor
 			if_then_must<
 				sor<keyword_static, keyword_virtual, keyword_callback>,
-				$named_rule("fn_normal", success),
+				named_rule("fn_normal", success),
 				sep,
 				tagged_rule<function_begin, type>,
 				sep,
@@ -85,7 +85,7 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<$named_rule("fn_normal", success)> {
+	struct run_action<named_rule("fn_normal", success)> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_fn_begin.type = FunctionType::Normal;
@@ -93,7 +93,7 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<$named_rule("structor", success)> {
+	struct run_action<named_rule("structor", success)> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_fn_begin.type = FunctionType::Ctor;
