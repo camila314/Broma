@@ -42,7 +42,7 @@ namespace broma {
 	struct run_action<tagged_rule<docs_attribute, string_literal>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_fn_begin.docs = input.string().substr(1, input.string().size() - 1);
+			scratch->wip_fn_proto.docs = input.string().substr(1, input.string().size() - 1);
 		}
 	};
 } // namespace broma

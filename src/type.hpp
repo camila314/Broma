@@ -78,7 +78,7 @@ namespace broma {
 	struct run_action<rule_begin<arg_list>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_fn_begin.args.clear();
+			scratch->wip_fn_proto.args.clear();
 		}
 	};
 
@@ -86,7 +86,7 @@ namespace broma {
 	struct run_action<tagged_rule<arg_list, type>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_fn_begin.args.push_back({scratch->wip_type, ""});
+			scratch->wip_fn_proto.args.push_back({scratch->wip_type, ""});
 		}
 	};
 
@@ -95,9 +95,9 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			if (input.string() == "")
-				scratch->wip_fn_begin.args.back().second = std::string("p") + std::to_string(scratch->wip_fn_begin.args.size() - 1);
+				scratch->wip_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_fn_proto.args.size() - 1);
 			else
-				scratch->wip_fn_begin.args.back().second = input.string();
+				scratch->wip_fn_proto.args.back().second = input.string();
 		}
 	};
 } // namespace broma

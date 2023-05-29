@@ -13,7 +13,7 @@ namespace broma {
 		PlatformNumber wip_bind;
 		Platform wip_bind_platform;
 		Type wip_type;
-		FunctionBegin wip_fn_begin;
+		FunctionProto wip_fn_proto;
 
 		std::vector<tao::pegtl::parse_error> errors;
 	};

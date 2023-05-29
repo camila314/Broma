@@ -34,7 +34,8 @@ enum class FunctionType {
 	Dtor
 };
 
-struct FunctionBegin {
+// The signature of a function.
+struct FunctionProto {
 	Type ret;
 	FunctionType type = FunctionType::Normal;
 	std::vector<std::pair<Type, std::string>> args;
@@ -45,7 +46,7 @@ struct FunctionBegin {
 	std::string docs;
 	std::string name;
 
-	inline bool operator==(FunctionBegin const& f) const {
+	inline bool operator==(FunctionProto const& f) const {
 		if (name != f.name || is_const != f.is_const || args.size() != f.args.size())
 			return false;
 
@@ -60,31 +61,35 @@ struct FunctionBegin {
 	}
 };
 
+// Member variables.
 struct MemberField {
 	std::string name;
 	Type type;
 	size_t count = 0;
 };
 
+// Structure padding.
 struct PadField {
 	PlatformNumber amount;
 };
 
+// Function that is bound to an address.
 struct FunctionBindField {
-	FunctionBegin beginning;
+	FunctionProto prototype;
 	PlatformNumber binds;
 };
 
+// Function body that goes in the source.
 struct OutOfLineField {
-	FunctionBegin beginning;
+	FunctionProto prototype;
 	std::string inner;
 };
 
+// Function body that goes in the header.
 struct InlineField {
 	std::string inner;
 };
 
-struct Class;
 struct Field {
 	size_t field_id;
 	std::string parent;
@@ -100,15 +105,16 @@ struct Field {
 		return std::get_if<T>(&inner);
 	}
 
-	inline FunctionBegin* get_fn() {
+	inline FunctionProto* get_fn() {
 		if (auto fn = get_as<OutOfLineField>()) {
-			return &fn->beginning;
+			return &fn->prototype;
 		} else if (auto fn = get_as<FunctionBindField>()) {
-			return &fn->beginning;
+			return &fn->prototype;
 		} else return nullptr;
 	}
 };
 
+// Class declaration.
 struct Class {
 	std::string name;
 	std::vector<std::string> superclasses;
@@ -123,8 +129,14 @@ struct Class {
 	}
 };
 
+// Free function binding.
+struct Function {
+	FunctionProto prototype;
+};
+
 struct Root {
 	std::vector<Class> classes;
+	std::vector<Function> functions;
 
 	inline Class* operator[](std::string const& name) {
 		auto it = std::find_if(classes.begin(), classes.end(), [name](Class& cls) {

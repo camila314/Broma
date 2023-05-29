@@ -5,7 +5,6 @@ using namespace tao::pegtl;
 
 #include "basic_components.hpp"
 #include "state.hpp"
-#include <sstream>
 
 namespace broma {
 	struct bind :
