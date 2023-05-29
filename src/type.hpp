@@ -112,7 +112,7 @@ namespace broma {
 				}
 			else {
 				if (input.string() == "")
-					scratch->wip_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_mem_fn_proto.args.size() - 1);
+					scratch->wip_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_fn_proto.args.size() - 1);
 				else
 					scratch->wip_fn_proto.args.back().second = input.string();
 			}
