@@ -78,7 +78,12 @@ namespace broma {
 	struct run_action<rule_begin<arg_list>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_mem_fn_proto.args.clear();
+			if (scratch->is_class) {
+				scratch->wip_mem_fn_proto.args.clear();
+			}
+			else {
+				scratch->wip_fn_proto.args.clear();
+			}
 		}
 	};
 
@@ -86,7 +91,12 @@ namespace broma {
 	struct run_action<tagged_rule<arg_list, type>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_mem_fn_proto.args.push_back({scratch->wip_type, ""});
+			if (scratch->is_class) {
+				scratch->wip_mem_fn_proto.args.push_back({scratch->wip_type, ""});
+			}
+			else {
+				scratch->wip_fn_proto.args.push_back({scratch->wip_type, ""});
+			}
 		}
 	};
 
@@ -94,10 +104,18 @@ namespace broma {
 	struct run_action<arg_name> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			if (input.string() == "")
-				scratch->wip_mem_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_mem_fn_proto.args.size() - 1);
-			else
-				scratch->wip_mem_fn_proto.args.back().second = input.string();
+			if (scratch->is_class) {
+				if (input.string() == "")
+					scratch->wip_mem_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_mem_fn_proto.args.size() - 1);
+				else
+					scratch->wip_mem_fn_proto.args.back().second = input.string();
+				}
+			else {
+				if (input.string() == "")
+					scratch->wip_fn_proto.args.back().second = std::string("p") + std::to_string(scratch->wip_mem_fn_proto.args.size() - 1);
+				else
+					scratch->wip_fn_proto.args.back().second = input.string();
+			}
 		}
 	};
 } // namespace broma

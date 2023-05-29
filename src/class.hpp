@@ -47,11 +47,11 @@ namespace broma {
         seq<
             opt<attribute>,
             sep,
-            must<keyword_class>,
+            keyword_class,
             whitespace,
-            must<named_rule("class name", qualified)>,
+            named_rule("class name", qualified),
             sep,
-            opt_must<
+            opt<
                 one<':'>,
                 sep,
                 list<seq<

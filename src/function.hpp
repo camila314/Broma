@@ -11,12 +11,13 @@ using namespace tao::pegtl;
 
 namespace broma {
 	struct function_proto :
-		seq <rule_begin<function_proto>, opt<attribute>, sep, sor<
+		seq <rule_begin<function_proto>,
+			opt<attribute>,
+			sep,
 			tagged_rule<function_proto, type>,
 			sep,
 			tagged_rule<function_proto, identifier>,
-			arg_list
-		>>
+			arg_list>
 		{};
 
 	template <>
@@ -25,16 +26,6 @@ namespace broma {
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->is_class = false;
 			scratch->wip_fn_proto = FunctionProto();
-		}
-	};
-
-	template <>
-	struct run_action<function_proto> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			root->functions.push_back(Function {
-				std::move(scratch->wip_fn_proto)
-			});
 		}
 	};
 
@@ -51,6 +42,21 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_fn_proto.name = input.string();
+		}
+	};
+
+	struct function : 
+		seq<rule_begin<function>, function_proto, sep, bind>
+		{};
+
+	template <>
+	struct run_action<function> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			Function f;
+			f.prototype = scratch->wip_fn_proto;
+			f.binds = scratch->wip_bind;
+			root->functions.push_back(f);
 		}
 	};
 

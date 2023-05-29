@@ -149,6 +149,7 @@ namespace broma {
 	// Free function binding.
 	struct Function {
 		FunctionProto prototype;
+		PlatformNumber binds;
 	};
 
 	struct Root {
