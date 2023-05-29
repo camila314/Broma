@@ -42,7 +42,7 @@ namespace broma {
 	template <typename T>
 	struct rule_begin : success {};
 
-	#define named_rule(name, ...) tagged_rule<TAO_PEGTL_INTERNAL_STRING(ascii::string, name), __VA_ARGS__>
+	#define named_rule(name, ...) tagged_rule<TAO_PEGTL_STRING(name), __VA_ARGS__>
 
 	#define keyword(name) struct keyword_##name : TAO_PEGTL_KEYWORD(#name) {}
 
