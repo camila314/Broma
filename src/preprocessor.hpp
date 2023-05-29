@@ -1,3 +1,5 @@
+#pragma once
+
 #include "basic_components.hpp"
 #include "state.hpp"
 

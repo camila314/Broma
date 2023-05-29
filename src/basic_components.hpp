@@ -42,23 +42,25 @@ namespace broma {
 	template <typename T>
 	struct rule_begin : success {};
 
-	#define $named_rule(name, ...) tagged_rule<TAO_PEGTL_INTERNAL_STRING(ascii::string, name), __VA_ARGS__>
+	#define named_rule(name, ...) tagged_rule<TAO_PEGTL_STRING(name), __VA_ARGS__>
 
-	#define $keyword(name) struct keyword_##name : TAO_PEGTL_KEYWORD(#name) {}
+	#define keyword(name) struct keyword_##name : TAO_PEGTL_KEYWORD(#name) {}
 
-	$keyword(const);
-	$keyword(static);
-	$keyword(virtual);
-	$keyword(callback);
-	$keyword(inline);
-	$keyword(class);
-	$keyword(struct);
-	$keyword(unsigned);
-	$keyword(mac);
-	$keyword(win);
-	$keyword(ios);
-	$keyword(android);
-	$keyword(PAD);
+	keyword(const);
+	keyword(static);
+	keyword(virtual);
+	keyword(callback);
+	keyword(inline);
+	keyword(class);
+	keyword(struct);
+	keyword(unsigned);
+	keyword(mac);
+	keyword(win);
+	keyword(ios);
+	keyword(android);
+	keyword(PAD);
+
+	#undef keyword
 
 	struct qualified : list<seq<identifier, opt<template_start>>, ascii::string<':', ':'>>  {};
 

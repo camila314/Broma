@@ -1,3 +1,4 @@
+// Member variables and padding.
 #pragma once
 
 #include <tao/pegtl.hpp>
