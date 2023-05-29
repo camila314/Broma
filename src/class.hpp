@@ -96,6 +96,7 @@ namespace broma {
         static void apply(T& input, Root* root, ScratchData* scratch) {
             root->classes.push_back(std::move(scratch->wip_class));
             //std::cout << "class end\n";
+            scratch->is_class = true;
             scratch->wip_class = Class();
         }
     };

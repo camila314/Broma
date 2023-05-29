@@ -1,3 +1,4 @@
+
 #include <string>
 #include <vector>
 #include <variant>
@@ -28,34 +29,48 @@ struct Type {
 	}
 };
 
+// The signature of a free function.
+struct FunctionProto {
+	Type ret;
+	std::vector<std::pair<Type, std::string>> args;
+	std::string docs;
+	std::string name;
+
+	inline bool operator==(FunctionProto const& f) const {
+		if (name != f.name || args.size() != f.args.size()) {
+			return false;
+		}
+
+		for (size_t i = 0; i < args.size(); ++i) {
+			if (!(args[i].first == f.args[i].first)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+};
+
+
 enum class FunctionType {
 	Normal,
 	Ctor,
 	Dtor
 };
 
-// The signature of a function.
-struct FunctionProto {
-	Type ret;
+struct MemberFunctionProto : FunctionProto {
 	FunctionType type = FunctionType::Normal;
-	std::vector<std::pair<Type, std::string>> args;
 	bool is_const = false;
 	bool is_virtual = false;
 	bool is_callback = false;
 	bool is_static = false;
-	std::string docs;
-	std::string name;
 
-	inline bool operator==(FunctionProto const& f) const {
-		if (name != f.name || is_const != f.is_const || args.size() != f.args.size())
+	inline bool operator==(MemberFunctionProto const& f) const {
+		if (!FunctionProto::operator==(f))
 			return false;
 
-		for (size_t i = 0; i < args.size(); ++i) {
-			if (!(args[i].first == f.args[i].first))
-				return false;
-		}
-
-		std::cout << f.ret.name << " " << f.name << "\n";
+		if (is_const != f.is_const)
+			return false;
 
 		return true;
 	}
@@ -75,13 +90,13 @@ struct PadField {
 
 // Function that is bound to an address.
 struct FunctionBindField {
-	FunctionProto prototype;
+	MemberFunctionProto prototype;
 	PlatformNumber binds;
 };
 
 // Function body that goes in the source.
 struct OutOfLineField {
-	FunctionProto prototype;
+	MemberFunctionProto prototype;
 	std::string inner;
 };
 
@@ -105,7 +120,7 @@ struct Field {
 		return std::get_if<T>(&inner);
 	}
 
-	inline FunctionProto* get_fn() {
+	inline MemberFunctionProto* get_fn() {
 		if (auto fn = get_as<OutOfLineField>()) {
 			return &fn->prototype;
 		} else if (auto fn = get_as<FunctionBindField>()) {

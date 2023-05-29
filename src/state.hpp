@@ -8,12 +8,14 @@ namespace broma {
 	struct run_action {};
 
 	struct ScratchData {
+		bool is_class;
 		Class wip_class;
+		FunctionProto wip_fn_proto;
 		Field wip_field;
 		PlatformNumber wip_bind;
 		Platform wip_bind_platform;
 		Type wip_type;
-		FunctionProto wip_fn_proto;
+		MemberFunctionProto wip_mem_fn_proto;
 
 		std::vector<tao::pegtl::parse_error> errors;
 	};

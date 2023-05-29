@@ -29,8 +29,6 @@ namespace broma {
 			for (auto& e : scratch.errors) {
 				std::cerr << "\t" << e.what() << "\n";
 			}
-
-			//abort();
 		}
 
 		return root;
