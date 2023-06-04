@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(Broma LANGUAGES C CXX)
 
+include(cmake/CPM.cmake)
+
 CPMAddPackage("gh:gulrak/filesystem#3e5b930")
 
 add_library(Broma ${CMAKE_CURRENT_SOURCE_DIR}/src/broma.cpp)
