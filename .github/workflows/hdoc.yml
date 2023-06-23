@@ -1,0 +1,79 @@
+name: 'Generate Broma docs'
+
+on: [push, pull_request]
+
+env:
+  HDOC_VERSION: '1.4.1'
+
+jobs:
+  build-hdoc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore cached hdoc binary
+        id: hdoc-cache
+        uses: actions/cache/restore@v3
+        with:
+          path: build
+          key: ${{ env.HDOC_VERSION }}
+          
+          
+      - name: Checkout hdoc repo
+        if: steps.hdoc-cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: 'hdoc/hdoc'
+          ref: ${{ env.HDOC_VERSION }}
+
+      - name: Install build dependencies
+        if: steps.hdoc-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get install -y clang llvm meson xxd libssl-dev libclang-dev libclang-cpp-dev
+
+      - name: Build hdoc
+        if: steps.hdoc-cache.outputs.cache-hit != 'true'
+        run: |
+          meson setup build
+          ninja -C build
+
+      - name: Upload hdoc binary to cache
+        if: steps.hdoc-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: build
+          key: ${{ env.HDOC_VERSION }}
+
+      - name: Upload hdoc binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: hdoc
+          path: build/hdoc
+
+  build:
+    runs-on: ubuntu-latest
+    needs: build-hdoc
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get compile_commands.json
+        run: CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake -B build
+
+      - name: Download hdoc binary
+        uses: actions/download-artifact@v3
+        with:
+          name: hdoc
+
+      - name: Install hdoc dependencies
+        run: |
+          sudo apt-get install -y llvm libssl-dev libclang-cpp-dev
+
+      - name: Run hdoc
+        run: |
+          chmod +x ./hdoc
+          ./hdoc --verbose
+
+      - name: Upload docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: doc-build/

@@ -1,0 +1,14 @@
+[project]
+name = "Broma"
+version = "1.0.0"
+
+git_repo_url = "https://github.com/camila314/Broma/"
+git_default_branch = "master"
+
+[paths]
+compile_commands = "build/compile_commands.json"
+output_dir = "doc-build"
+
+[ignore]
+# Ignore PEGTL and unit tests
+paths = ["PEGTL-3.2.7", "test"]
