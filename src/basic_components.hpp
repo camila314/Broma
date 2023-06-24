@@ -52,13 +52,13 @@ namespace broma {
 
 	/// @brief A convenience grammar for running AST actions.
 	///
-	/// See "How Broma uses PEGTL" for more information.
+	/// See "How Broma uses PEGTL" in the Developer's Guide for more information.
 	template <typename T, typename ...Args>
 	struct tagged_rule : seq<Args...> {};
 
 	/// @brief A rule to notate the beginning of a grammar.
 	///
-	/// See "How Broma uses PEGTL" for more information.
+	/// See "How Broma uses PEGTL" in the Developer's Guide for more information.
 	template <typename T>
 	struct rule_begin : success {};
 

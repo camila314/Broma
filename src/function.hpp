@@ -10,6 +10,7 @@ using namespace tao::pegtl;
 #include "state.hpp"
 
 namespace broma {
+	/// @brief A function signature / prototype.
 	struct function_proto :
 		seq <rule_begin<function_proto>,
 			opt<attribute>,
@@ -45,6 +46,7 @@ namespace broma {
 		}
 	};
 
+	/// @brief A full function (prototype and bindings).
 	struct function : 
 		seq<rule_begin<function>, function_proto, sep, bind>
 		{};
@@ -60,6 +62,9 @@ namespace broma {
 		}
 	};
 
+	/// @brief A member function prototype.
+	///
+	/// This allows some more qualifiers than the free function prototype.
 	struct member_function_proto :
 		seq<rule_begin<member_function_proto>, opt<attribute>, sep, sor<
 			// ctor, dtor
@@ -182,6 +187,7 @@ namespace broma {
 		}
 	};
 
+	/// @brief A member function body (should go in a .cpp file).
 	struct ool_expr : seq<member_function_proto, sep, tagged_rule<ool_expr, brace_start>> {};
 
 	template <>
@@ -195,6 +201,7 @@ namespace broma {
 		}
 	};
 
+	/// @brief An offset binding expression.
 	struct bind_expr : seq<member_function_proto, sep, bind> {};
 
 	template <>
