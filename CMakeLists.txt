@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(Broma LANGUAGES C CXX)
 
-include(cmake/CPM.cmake)
+include(cmake/get_cpm.cmake)
 
 CPMAddPackage("gh:gulrak/filesystem#3e5b930")
 
