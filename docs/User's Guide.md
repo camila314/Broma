@@ -49,7 +49,7 @@ You can iterate through each class (and function) like so:
 // In some function...
 for (broma::Class& cls : root.classes) {
     std::string& name = cls.name;
-    for (auto& field : cls.fields) {
+    for (broma::Field& field : cls.fields) {
         // Since `field` is a std::variant, we need to cast it
         if (auto func = field.get_as<broma::FunctionBindField>()) {
             // Do something with the class's function...
