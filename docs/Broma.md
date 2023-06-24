@@ -4,7 +4,7 @@ This language is primarily designed for use in the Geometry Dash modding framewo
 and most of the language features are tailored for that usecase.
 
 # User's Guide
-If you're looking to use this project as a library in your own project, see the user's guide linked [here](./users-guide.md).
+If you're looking to use this project as a library in your own project, see the user's guide linked [here](./User's Guide.md).
 
 # Developer's Guide
-If you're looking to contribute to Broma, see the developer's guide [here](./developers-guide.md), or search through the API reference.
+If you're looking to contribute to Broma, see the developer's guide [here](./Developer's Guide.md), or search through the API reference.

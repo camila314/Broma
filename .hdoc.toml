@@ -6,10 +6,10 @@ git_repo_url = "https://github.com/camila314/Broma/"
 git_default_branch = "master"
 
 [pages]
-homepage = "docs/index.md"
+homepage = "docs/Broma.md"
 paths = [
-    "docs/users-guide.md",
-    "docs/developers-guide.md"
+    "docs/User's Guide.md",
+    "docs/Developer's Guide.md"
 ]
 
 [paths]

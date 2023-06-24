@@ -3,8 +3,8 @@ Thank you for using Broma! This guide aims to give you a quick runthrough of how
 
 # Requirements
 Broma requires:
-- **A C++17 compliant compiler.**: Any recent version of Clang, GCC, or Microsoft Visual C++ should work.
-- **CMake**: Although this may not be strictly necessary, we expect you to use CMake throughout this tutorial, to align with Broma's own build system.
+- **A C++17 compliant compiler.** Any recent version of Clang, GCC, or Microsoft Visual C++ should work.
+- **CMake.** Although this may not be strictly necessary, we expect you to use CMake throughout this tutorial, to align with Broma's own build system.
 
 # Installation
 The easiest way to add Broma to your project is to use [CPM](https://github.com/cpm-cmake/CPM.cmake).
@@ -47,8 +47,8 @@ This should return a `broma::Root` struct, which contains all parsed classes and
 You can interate through each class (and function) like so:
 ```cpp
 // In some function...
-for (auto& cls : ast.classes) {
-    auto name = cls.name;
+for (broma::Class& cls : root.classes) {
+    std::string& name = cls.name;
     for (auto& field : cls.fields) {
         // Since `field` is a std::variant, we need to cast it
         if (auto func = field.get_as<broma::FunctionBindField>()) {
@@ -60,9 +60,13 @@ for (auto& cls : ast.classes) {
     }
 }
 
-for (auto& func : ast.functions) {
-    auto proto = func.prototype;
+for (broma::Function& func : root.functions) {
+    // The parsed signature of the function.
+    broma::FunctionProto proto = func.prototype;
+    // The bound address of the function for each different supported platform.
+    broma::PlatformNumber num_binds = func.binds;
 }
 ```
 
 See the declarations of `broma::Function` and `broma::Class` for more information.
+Happy hacking!
