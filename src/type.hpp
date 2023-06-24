@@ -7,6 +7,7 @@ using namespace tao::pegtl;
 #include "state.hpp"
 
 namespace broma {
+	/// @brief A C++ type declaration.
 	struct type_content : 
 		if_then_must<
 			pad_space<sor<keyword_const, keyword_struct>>,
@@ -19,6 +20,7 @@ namespace broma {
 			star<seq<sep, one<'&', '*'>>>
 		> {};
 
+	/// @brief A C++ type declaration, with starting whitespace.
 	struct type : seq<rule_begin<type>, sep, type_content> {};
 
 	template <>
@@ -45,6 +47,7 @@ namespace broma {
 		}
 	};
 
+	/// @brief A C++ array literal.
 	struct array : if_must<one<'['>, tagged_rule<array, plus<ascii::digit>>, one<']'>> {};
 
 	template <>
@@ -55,7 +58,9 @@ namespace broma {
 		}
 	};
 
+	/// @brief The name of a function argument.
 	struct arg_name : opt<identifier> {};
+	/// @brief A list of function arguments (including parentheses).
 	struct arg_list : 
 		seq<
 			rule_begin<arg_list>,
