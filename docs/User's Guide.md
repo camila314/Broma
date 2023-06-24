@@ -1,5 +1,5 @@
 # User's guide to Broma
-Thank you for using Broma! This guide aims to give you a quick runthrough of how to set up the library, and how to start using it.
+Thank you for using Broma! This guide aims to give you a quick run-through of how to set up the library, and how to start using it.
 
 # Requirements
 Broma requires:
@@ -44,7 +44,7 @@ catch (std::exception& const err) {
 ```
 
 This should return a `broma::Root` struct, which contains all parsed classes and functions found.
-You can interate through each class (and function) like so:
+You can iterate through each class (and function) like so:
 ```cpp
 // In some function...
 for (broma::Class& cls : root.classes) {
