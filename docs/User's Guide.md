@@ -1,12 +1,12 @@
 # User's guide to Broma
 Thank you for using Broma! This guide aims to give you a quick run-through of how to set up the library, and how to start using it.
 
-# Requirements
+## Requirements
 Broma requires:
 - **A C++17 compliant compiler.** Any recent version of Clang, GCC, or Microsoft Visual C++ should work.
 - **CMake.** Although this may not be strictly necessary, we expect you to use CMake throughout this tutorial, to align with Broma's own build system.
 
-# Installation
+## Installation
 The easiest way to add Broma to your project is to use [CPM](https://github.com/cpm-cmake/CPM.cmake).
 This also prevents code duplication, since Broma uses CPM internally to install its dependencies.
 You can find out how to install CPM to your own CMake project [here](https://github.com/cpm-cmake/CPM.cmake#adding-cpm).
@@ -25,7 +25,7 @@ add_executable(example example.cpp)
 target_link_libraries(example PRIVATE Broma)
 ```
 
-# Usage
+## Usage
 First, include Broma as a header in your C++ file:
 ```cpp
 #include <broma.hpp>
