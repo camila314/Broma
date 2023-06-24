@@ -91,3 +91,18 @@ This makes it much easier to write actions to mutate the AST based on where the 
 #### `named_rule`
 This serves almost an identical purpose to `tagged_rule`, except that it makes the code a bit more readable,
 by providing a description to the section of the grammar it is applied to.
+
+#### `rule_begin`
+This grammar is also purely for readability, since it simply evaluates to `success`.
+Make sure the template parameter in this grammar is the same as the one begin currently defined:
+```cpp
+struct my_rule : seq<rule_begin<my_rule>, sor<subrule1, subrule2>>
+
+struct run_action<rule_begin<my_rule>> {
+	template <typename T>
+	static void apply(/* ... */) {
+		// Reset the WIP structure for this AST type, etc...
+	}
+}
+```
+Otherwise, this may lead to confusion to other contributors.
