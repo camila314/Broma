@@ -8,6 +8,7 @@ using namespace tao::pegtl;
 
 namespace broma {
 	/// @brief The inner portion of an attribute.
+	///
 	/// This includes anything within the double brackets (`[[...]]`).
 	template <typename Name, typename ...Parse>
 	struct basic_attribute : seq<
@@ -25,6 +26,7 @@ namespace broma {
 	struct depends_attribute : basic_attribute<TAO_PEGTL_KEYWORD("depends"), tagged_rule<depends_attribute, qualified>> {};
 
 	/// @brief All allowed C++ attributes.
+	///
 	/// Currently, this only includes the `[[docs(...)]]` and `[[depends(...)]]` attributes.
 	struct attribute : 
 		if_must<ascii::string<'[', '['>, 

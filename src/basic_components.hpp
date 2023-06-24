@@ -38,22 +38,26 @@ namespace broma {
 
 	struct brace_end;
 	/// @brief A C++ scope.
+	///
 	/// This grammar accounts for any recursive scopes, for inline function bodies.
 	struct brace_start : seq<one<'{'>, brace_end> {};
 	struct brace_end : until<one<'}'>, sor<string_literal, brace_start, any>> {};
 
 	struct template_end;
 	/// @brief A C++ template expression.
+	///
 	/// This grammar accounts for any recursive templates.
 	struct template_start : seq<one<'<'>, template_end> {};
 	struct template_end : until<one<'>'>, sor<string_literal, template_start, any>> {};
 
 	/// @brief A convenience grammar for running AST actions.
+	///
 	/// See "How Broma uses PEGTL" for more information.
 	template <typename T, typename ...Args>
 	struct tagged_rule : seq<Args...> {};
 
 	/// @brief A rule to notate the beginning of a grammar.
+	///
 	/// See "How Broma uses PEGTL" for more information.
 	template <typename T>
 	struct rule_begin : success {};
@@ -78,11 +82,13 @@ namespace broma {
 
 	#undef keyword
 
-	/// @brief A C++ [qualified identifier](https://en.cppreference.com/w/cpp/language/identifiers#Qualified_identifiers).
+	/// @brief A C++ qualified identifier.
+	///
+	/// See https://en.cppreference.com/w/cpp/language/identifiers#Qualified_identifiers.
 	struct qualified : list<seq<identifier, opt<template_start>>, ascii::string<':', ':'>>  {};
 
-	/// @brief A hex literal.
 	// point of no return: '0x'
+	/// @brief A hex literal.
 	struct hex : if_must<ascii::string<'0', 'x'>, plus<ascii::xdigit>> {};
 
 	/// @brief A platform identifier (mac, win, ios, android).

@@ -101,18 +101,18 @@ namespace broma {
 		PlatformNumber binds; ///< The offsets, separated per platform.
 	};
 
-	/// @brief An function with an inline body that should go in a source file (.cpp).
+	/// @brief An inline function body that should go in a source file (.cpp).
 	struct OutOfLineField {
 		MemberFunctionProto prototype;
 		std::string inner; ///< The inline body of the function as a raw string.
 	};
 
-	/// @brief A function with an inline body that should go in a header file (.hpp).
+	/// @brief A inline function body that should go in a header file (.hpp).
 	struct InlineField {
 		std::string inner; ///< The inline body of the function as a raw string.
 	};
 
-	/// @brief A class "field" (member variable, member function, padding).
+	/// @brief A class field.
 	struct Field {
 		size_t field_id; ///< The index of the field. This starts from 0 and counts up across all classes.
 		std::string parent; ///< The name of the parent class.
@@ -163,6 +163,7 @@ namespace broma {
 	};
 
 	/// @brief Broma's root grammar (the root AST).
+	///
 	/// See the user's guide for an example on how to traverse this AST.
 	struct Root {
 		std::vector<Class> classes;
