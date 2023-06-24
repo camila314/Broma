@@ -38,7 +38,7 @@ namespace broma {
 	struct FunctionProto {
 		Type ret; ///< The return type of the function.
 		std::vector<std::pair<Type, std::string>> args; ///< All arguments, represented by their type and their name.
-		std::string docs; ///< Any docstring pulled from a [[docs(...)]] attribute.
+		std::string docs; ///< Any docstring pulled from a `[[docs(...)]]` attribute.
 		std::string name; ///< The function's name.
 
 		inline bool operator==(FunctionProto const& f) const {
@@ -145,7 +145,7 @@ namespace broma {
 		std::string name; ///< The name of the class.
 		std::vector<std::string> superclasses; ///< Parent classes that the current class inherits.
 		std::vector<std::string> depends; ///< Classes the current class depends on.
-										  ///< This includes parent classes, and any classes declared in a [[depends(...)]] attribute.
+										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
 		std::vector<Field> fields; ///< All the fields parsed in the class.
 
 		inline bool operator==(Class const& c) const {
