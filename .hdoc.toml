@@ -5,6 +5,13 @@ version = "1.0.0"
 git_repo_url = "https://github.com/camila314/Broma/"
 git_default_branch = "master"
 
+[pages]
+homepage = "docs/index.md"
+paths = [
+    "docs/users-guide.md",
+    "docs/developers-guide.md"
+]
+
 [paths]
 compile_commands = "build/compile_commands.json"
 output_dir = "doc-build"
