@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <variant>
@@ -5,134 +7,177 @@
 #include <algorithm>
 #include <iostream>
 
-enum class Platform {
-	Mac,
-	iOS,
-	Windows,
-	Android
-};
+namespace broma {
+	/// @brief The platform currently being processed in a bind statement.
+	enum class Platform {
+		Mac,
+		iOS,
+		Windows,
+		Android
+	};
 
-struct PlatformNumber {
-	size_t mac = 0;
-	size_t ios = 0;
-	size_t win = 0;
-	size_t android = 0;
-};
+	/// @brief Binding offsets for each platform.
+	struct PlatformNumber {
+		size_t mac = 0;
+		size_t ios = 0;
+		size_t win = 0;
+		size_t android = 0;
+	};
 
-struct Type {
-	bool is_struct = false;
-	std::string name;
+	/// @brief A C++ type declaration.
+	struct Type {
+		bool is_struct = false;
+		std::string name;
 
-	bool operator==(Type const& t) const {
-		return name == t.name;
-	}
-};
+		bool operator==(Type const& t) const {
+			return name == t.name;
+		}
+	};
 
-enum class FunctionType {
-	Normal,
-	Ctor,
-	Dtor
-};
+	/// @brief The signature of a free function.
+	struct FunctionProto {
+		Type ret; ///< The return type of the function.
+		std::vector<std::pair<Type, std::string>> args; ///< All arguments, represented by their type and their name.
+		std::string docs; ///< Any docstring pulled from a `[[docs(...)]]` attribute.
+		std::string name; ///< The function's name.
 
-struct FunctionBegin {
-	Type ret;
-	FunctionType type = FunctionType::Normal;
-	std::vector<std::pair<Type, std::string>> args;
-	bool is_const = false;
-	bool is_virtual = false;
-	bool is_static = false;
-	std::string docs;
-	std::string name;
-
-	inline bool operator==(FunctionBegin const& f) const {
-		if (name != f.name || is_const != f.is_const || args.size() != f.args.size())
-			return false;
-
-		for (size_t i = 0; i < args.size(); ++i) {
-			if (!(args[i].first == f.args[i].first))
+		inline bool operator==(FunctionProto const& f) const {
+			if (name != f.name || args.size() != f.args.size()) {
 				return false;
+			}
+
+			for (size_t i = 0; i < args.size(); ++i) {
+				if (!(args[i].first == f.args[i].first)) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+	};
+
+	/// @brief A member function's type.
+	enum class FunctionType {
+		Normal,
+		Ctor, ///< A constructor.
+		Dtor ///< A destructor.
+	};
+
+	/// @brief The signature of a member function.
+	struct MemberFunctionProto : FunctionProto {
+		FunctionType type = FunctionType::Normal;
+		bool is_const = false;
+		bool is_virtual = false;
+		bool is_callback = false; ///< Whether or not this function is a callback.
+								  ///< In Geode, this determines the function's calling convention (optcall or thiscall).
+		bool is_static = false;
+
+		inline bool operator==(MemberFunctionProto const& f) const {
+			if (!FunctionProto::operator==(f))
+				return false;
+
+			if (is_const != f.is_const)
+				return false;
+
+			return true;
+		}
+	};
+
+	/// @brief A class's member variables.
+	struct MemberField {
+		std::string name;
+		Type type;
+		size_t count = 0;
+	};
+
+	/// @brief Any class padding.
+	struct PadField {
+		PlatformNumber amount; ///< The amount of padding, separated per platform.
+	};
+
+	/// @brief A function that is bound to an offset.
+	struct FunctionBindField {
+		MemberFunctionProto prototype;
+		PlatformNumber binds; ///< The offsets, separated per platform.
+	};
+
+	/// @brief An inline function body that should go in a source file (.cpp).
+	struct OutOfLineField {
+		MemberFunctionProto prototype;
+		std::string inner; ///< The inline body of the function as a raw string.
+	};
+
+	/// @brief A inline function body that should go in a header file (.hpp).
+	struct InlineField {
+		std::string inner; ///< The inline body of the function as a raw string.
+	};
+
+	/// @brief A class field.
+	struct Field {
+		size_t field_id; ///< The index of the field. This starts from 0 and counts up across all classes.
+		std::string parent; ///< The name of the parent class.
+		std::variant<InlineField, OutOfLineField, FunctionBindField, PadField, MemberField> inner;
+
+		/// @brief Cast the field into a variant type. This is useful to extract data from the field.
+		template <typename T>
+		T* get_as() {
+			return std::get_if<T>(&inner);
 		}
 
-		std::cout << f.ret.name << " " << f.name << "\n";
+		/// @brief Cast the field into a variant type. This is useful to extract data from the field.
+		template <typename T>
+		T const* get_as() const {
+			return std::get_if<T>(&inner);
+		}
 
-		return true;
-	}
-};
+		/// @brief Convenience function to get the function prototype of the field, if the field is a function of some sort.
+		inline MemberFunctionProto* get_fn() {
+			if (auto fn = get_as<OutOfLineField>()) {
+				return &fn->prototype;
+			} else if (auto fn = get_as<FunctionBindField>()) {
+				return &fn->prototype;
+			} else return nullptr;
+		}
+	};
 
-struct MemberField {
-	std::string name;
-	Type type;
-	size_t count = 0;
-};
+	/// @brief A top-level class declaration.
+	struct Class {
+		std::string name; ///< The name of the class.
+		std::vector<std::string> superclasses; ///< Parent classes that the current class inherits.
+		std::vector<std::string> depends; ///< Classes the current class depends on.
+										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
+		std::vector<Field> fields; ///< All the fields parsed in the class.
 
-struct PadField {
-	PlatformNumber amount;
-};
+		inline bool operator==(Class const& c) const {
+			return name == c.name;
+		}
+		inline bool operator==(std::string const& n) const {
+			return name == n;
+		}
+	};
 
-struct FunctionBindField {
-	FunctionBegin beginning;
-	PlatformNumber binds;
-};
+	/// @brief A top-level free function binding.
+	struct Function {
+		FunctionProto prototype; ///< The free function's signature.
+		PlatformNumber binds; ///< The offsets of free function, separated per platform.
+	};
 
-struct OutOfLineField {
-	FunctionBegin beginning;
-	std::string inner;
-};
+	/// @brief Broma's root grammar (the root AST).
+	///
+	/// See the user's guide for an example on how to traverse this AST.
+	struct Root {
+		std::vector<Class> classes;
+		std::vector<Function> functions;
 
-struct InlineField {
-	std::string inner;
-};
+		inline Class* operator[](std::string const& name) {
+			auto it = std::find_if(classes.begin(), classes.end(), [name](Class& cls) {
+					return cls.name == name;
+			});
 
-struct Class;
-struct Field {
-	size_t field_id;
-	std::string parent;
-	std::variant<InlineField, OutOfLineField, FunctionBindField, PadField, MemberField> inner;
+			if (it == classes.end())
+				return nullptr;
 
-	template <typename T>
-	T* get_as() {
-		return std::get_if<T>(&inner);
-	}
-
-	template <typename T>
-	T const* get_as() const {
-		return std::get_if<T>(&inner);
-	}
-
-	inline FunctionBegin* get_fn() {
-		if (auto fn = get_as<OutOfLineField>()) {
-			return &fn->beginning;
-		} else if (auto fn = get_as<FunctionBindField>()) {
-			return &fn->beginning;
-		} else return nullptr;
-	}
-};
-
-struct Class {
-	std::string name;
-	std::vector<std::string> superclasses;
-	std::vector<std::string> depends;
-	std::vector<Field> fields;
-
-	inline bool operator==(Class const& c) const {
-		return name == c.name;
-	}
-	inline bool operator==(std::string const& n) const {
-		return name == n;
-	}
-};
-
-struct Root {
-	std::vector<Class> classes;
-
-	inline Class* operator[](std::string const& name) {
-		auto it = std::find_if(classes.begin(), classes.end(), [name](Class& cls) {
-		        return cls.name == name;
-		});
-
-		if (it == classes.end())
-			return nullptr;
-
-		return &*it;
-	}
-};
+			return &*it;
+		}
+	};
+} // namespace broma

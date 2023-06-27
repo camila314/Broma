@@ -1,7 +1,7 @@
 # Broma
 
-Broma is a cpp-like language designed for automatically generating cross-platform address bindings for classes and functions. Here is an example:
-
+Broma is a C++-like language and parser designed to generate "bindings" for C++ classes and functions in external native binaries.
+Here's some example bindings:
 ```cpp
 class BindedClass {
 	void bindedFunction() = mac 0xd5db0, win 0x3c8d, ios 0xa83bc;
@@ -25,5 +25,5 @@ class OtherBindedClass : BindedClass {
 	std::vector<int> m_myVector;
 }
 ```
-
-This language is most notably used in the Geometry Dash modding framework [Geode](https://github.com/geode-sdk/geode), and most langauge features here are tailored to that.
+This language is primarily designed for use in the Geometry Dash modding framework [Geode](https://github.com/geode-sdk/geode),
+and most of the language features are tailored for that usecase.

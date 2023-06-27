@@ -1,3 +1,4 @@
+// Member variables and padding.
 #pragma once
 
 #include <tao/pegtl.hpp>
@@ -8,6 +9,7 @@ using namespace tao::pegtl;
 #include "state.hpp"
 
 namespace broma {
+	/// @brief A class member variable.
 	struct member_expr : 
 		seq<
 			rule_begin<member_expr>,
@@ -45,6 +47,7 @@ namespace broma {
 		}
 	};
 
+	/// @brief Padding in a class declaration.
 	struct pad_expr : seq<keyword_PAD, sep, bind> {};
 
 	template <>
