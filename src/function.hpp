@@ -61,6 +61,7 @@ namespace broma {
 			f.links = scratch->wip_link_platform;
 			root->functions.push_back(f);
 
+			scratch->is_class = true;
 			scratch->wip_link_platform = Platform::None;
 		}
 	};
