@@ -49,7 +49,7 @@ namespace broma {
 	struct class_statement :
 	seq<
 		rule_begin<class_statement>,
-		opt<attribute>,
+		tagged_rule<class_statement, opt<attribute>>,
 		sep,
 		keyword_class,
 		whitespace,
@@ -101,7 +101,6 @@ namespace broma {
 			root->classes.push_back(std::move(scratch->wip_class));
 			//std::cout << "class end\n";
 			scratch->wip_class = Class();
-			scratch->wip_class.links = scratch->wip_link_platform;
 			scratch->wip_link_platform = Platform::None;
 		}
 	};
@@ -110,8 +109,15 @@ namespace broma {
 	struct run_action<rule_begin<class_statement>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			//std::cout << "class end\n";
 			scratch->is_class = true;
+		}
+	};
+
+	template <>
+	struct run_action<tagged_rule<class_statement, opt<attribute>>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_class.links = scratch->wip_link_platform;
 		}
 	};
 } // namespace broma
