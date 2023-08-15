@@ -56,6 +56,14 @@ namespace broma {
 	template <typename T, typename ...Args>
 	struct tagged_rule : seq<Args...> {};
 
+	/// @brief A convenience grammar for running AST actions for each parameter of the rule.
+	///
+	/// See "How Broma uses PEGTL" in the Developer's Guide for more information.
+	template <typename T, typename Rule>
+	struct tagged_for_each {};
+	template <typename T, template<typename...> typename Rule, typename ...Args>
+	struct tagged_for_each<T, Rule<Args...>> : Rule<tagged_rule<T, Args>...> {};
+
 	/// @brief A rule to notate the beginning of a grammar.
 	///
 	/// See "How Broma uses PEGTL" in the Developer's Guide for more information.
@@ -92,5 +100,6 @@ namespace broma {
 	struct hex : if_must<ascii::string<'0', 'x'>, plus<ascii::xdigit>> {};
 
 	/// @brief A platform identifier (mac, win, ios, android).
-	struct platform : sor<keyword_mac, keyword_win, keyword_ios, keyword_android> {};
+	template <typename T>
+	struct tagged_platform : tagged_for_each<T, sor<keyword_mac, keyword_win, keyword_ios, keyword_android>> {};
 } // namespace broma

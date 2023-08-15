@@ -101,6 +101,8 @@ namespace broma {
 			//std::cout << "class end\n";
 			scratch->is_class = true;
 			scratch->wip_class = Class();
+			scratch->wip_class.links = scratch->wip_link_platform;
+			scratch->wip_link_platform = Platform::None;
 		}
 	};
 } // namespace broma

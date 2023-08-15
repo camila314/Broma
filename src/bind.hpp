@@ -14,7 +14,7 @@ namespace broma {
 			sep, 
 			list<opt<
 				sep,
-				sor<keyword_mac, keyword_win, keyword_ios, keyword_android>,
+				tagged_platform<bind>,
 				sep,
 				tagged_rule<bind, hex>
 			>, one<','>>,
@@ -31,28 +31,28 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<keyword_mac> {
+	struct run_action<tagged_rule<bind, keyword_mac>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_bind_platform = Platform::Mac;
 		}
 	};
 	template <>
-	struct run_action<keyword_ios> {
+	struct run_action<tagged_rule<bind, keyword_ios>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_bind_platform = Platform::iOS;
 		}
 	};
 	template <>
-	struct run_action<keyword_win> {
+	struct run_action<tagged_rule<bind, keyword_win>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_bind_platform = Platform::Windows;
 		}
 	};
 	template <>
-	struct run_action<keyword_android> {
+	struct run_action<tagged_rule<bind, keyword_android>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_bind_platform = Platform::Android;
@@ -77,6 +77,8 @@ namespace broma {
 					break;
 				case Platform::Android:
 					scratch->wip_bind.android = out;
+					break;
+				default:
 					break;
 			}
 		}

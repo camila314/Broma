@@ -10,11 +10,30 @@
 namespace broma {
 	/// @brief The platform currently being processed in a bind statement.
 	enum class Platform {
-		Mac,
-		iOS,
-		Windows,
-		Android
+		None = 0,
+		Mac = 1,
+		Windows = 2,
+		Android = 4,
+		iOS = 8,
 	};
+
+	inline Platform operator|(Platform a, Platform b) {
+		return static_cast<Platform>(static_cast<int>(a) | static_cast<int>(b));
+	}
+
+	inline Platform& operator|=(Platform& a, Platform& b) {
+		a = a | b;
+		return a;
+	}
+
+	inline Platform operator&(Platform a, Platform b) {
+		return static_cast<Platform>(static_cast<int>(a) & static_cast<int>(b));
+	}
+
+	inline Platform& operator&=(Platform& a, Platform& b) {
+		a = a & b;
+		return a;
+	}
 
 	/// @brief Binding offsets for each platform.
 	struct PlatformNumber {
@@ -99,6 +118,7 @@ namespace broma {
 	struct FunctionBindField {
 		MemberFunctionProto prototype;
 		PlatformNumber binds; ///< The offsets, separated per platform.
+		Platform links; ///< All the platforms that link the function
 	};
 
 	/// @brief An inline function body that should go in a source file (.cpp).
@@ -148,6 +168,8 @@ namespace broma {
 										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
 		std::vector<Field> fields; ///< All the fields parsed in the class.
 
+		Platform links; ///< All the platforms that link the class
+
 		inline bool operator==(Class const& c) const {
 			return name == c.name;
 		}
@@ -160,6 +182,7 @@ namespace broma {
 	struct Function {
 		FunctionProto prototype; ///< The free function's signature.
 		PlatformNumber binds; ///< The offsets of free function, separated per platform.
+		Platform links; ///< All the platforms that link the function
 	};
 
 	/// @brief Broma's root grammar (the root AST).
