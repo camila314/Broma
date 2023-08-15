@@ -26,6 +26,7 @@ namespace broma {
 	struct depends_attribute : basic_attribute<TAO_PEGTL_KEYWORD("depends"), tagged_rule<depends_attribute, qualified>> {};
 	struct link_attribute : basic_attribute<TAO_PEGTL_KEYWORD("link"), tagged_rule<link_attribute, 
 		seq<
+			rule_begin<link_attribute>,
 			sep, 
 			list<opt<
 				sep,
@@ -102,6 +103,14 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_link_platform |= Platform::Android;
+		}
+	};
+
+	template <>
+	struct run_action<rule_begin<link_attribute>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_link_platform = Platform::None;
 		}
 	};
 } // namespace broma
