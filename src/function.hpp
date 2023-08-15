@@ -216,6 +216,8 @@ namespace broma {
 			f.binds = scratch->wip_bind;
 			f.links = scratch->wip_link_platform;
 			scratch->wip_field.inner = f;
+
+			scratch->wip_link_platform = scratch->wip_class.links;
 		}
 	};
 } // namespace broma

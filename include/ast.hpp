@@ -21,7 +21,7 @@ namespace broma {
 		return static_cast<Platform>(static_cast<int>(a) | static_cast<int>(b));
 	}
 
-	inline Platform& operator|=(Platform& a, Platform& b) {
+	inline Platform& operator|=(Platform& a, Platform b) {
 		a = a | b;
 		return a;
 	}
@@ -30,7 +30,7 @@ namespace broma {
 		return static_cast<Platform>(static_cast<int>(a) & static_cast<int>(b));
 	}
 
-	inline Platform& operator&=(Platform& a, Platform& b) {
+	inline Platform& operator&=(Platform& a, Platform b) {
 		a = a & b;
 		return a;
 	}

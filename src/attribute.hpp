@@ -80,28 +80,28 @@ namespace broma {
 	struct run_action<tagged_rule<link_attribute, keyword_mac>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform = Platform::Mac;
+			scratch->wip_link_platform |= Platform::Mac;
 		}
 	};
 	template <>
 	struct run_action<tagged_rule<link_attribute, keyword_ios>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform = Platform::iOS;
+			scratch->wip_link_platform |= Platform::iOS;
 		}
 	};
 	template <>
 	struct run_action<tagged_rule<link_attribute, keyword_win>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform = Platform::Windows;
+			scratch->wip_link_platform |= Platform::Windows;
 		}
 	};
 	template <>
 	struct run_action<tagged_rule<link_attribute, keyword_android>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform = Platform::Android;
+			scratch->wip_link_platform |= Platform::Android;
 		}
 	};
 } // namespace broma
