@@ -59,9 +59,11 @@ namespace broma {
 			f.prototype = scratch->wip_fn_proto;
 			f.binds = scratch->wip_bind;
 			f.links = scratch->wip_link_platform;
+			f.missing = scratch->wip_missing_platform;
 			root->functions.push_back(f);
 
 			scratch->wip_link_platform = Platform::None;
+			scratch->wip_missing_platform = Platform::None;
 		}
 	};
 
@@ -214,10 +216,7 @@ namespace broma {
 			FunctionBindField f;
 			f.prototype = scratch->wip_mem_fn_proto;
 			f.binds = scratch->wip_bind;
-			f.links = scratch->wip_link_platform;
 			scratch->wip_field.inner = f;
-
-			scratch->wip_link_platform = scratch->wip_class.links;
 		}
 	};
 } // namespace broma

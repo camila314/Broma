@@ -25,6 +25,7 @@ namespace broma {
 		Type wip_type;
 		MemberFunctionProto wip_mem_fn_proto;
 		Platform wip_link_platform = Platform::None;
+		Platform wip_missing_platform = Platform::None;
 
 		std::vector<tao::pegtl::parse_error> errors;
 	};

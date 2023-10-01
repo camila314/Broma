@@ -1,0 +1,60 @@
+[
+    {
+        "name": "llvm-clang",
+        "compilers": {
+            "C": "/usr/local/opt/llvm/bin/clang",
+            "CXX": "/usr/local/opt/llvm/bin/clang++",
+            "GEODE_DEBUG": "1"
+        }
+    },
+    {
+        "name": "ccache",
+        "compilers": {
+            "C": "/usr/local/opt/llvm/bin/clang",
+            "CXX": "/usr/local/opt/llvm/bin/clang++"
+        },
+        "cmakeSettings" : {
+            "CMAKE_C_COMPILER_LAUNCHER": "/usr/local/bin/ccache",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "/usr/local/bin/ccache",
+            "GEODE_DEBUG": "1"
+        }
+    },
+    {
+        "name": "llvm-windows-crosscompile",
+        "preferredGenerator": {
+            "name": "Ninja"
+        },
+        "toolchainFile": "/Users/student/MSVC/cmake/ClangMSVC.cmake",
+        "cmakeSettings" : {
+            "CMAKE_C_COMPILER_LAUNCHER": "/usr/local/bin/ccache",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "/usr/local/bin/ccache",
+            "WINSDK_VER": "10.0.22621.0",
+            "MSVC_BASE": "/Users/student/MSVC/vc/tools/msvc/14.34.31933",
+            "WINSDK_BASE": "/Users/student/MSVC/kits/10",
+            "LLVM_PATH": "/usr/local/opt/llvm/bin",
+            "LLVM_VER": "15",
+            "CLANG_VER": "15",
+            "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+            "HOST_ARCH": "x86",
+            "GEODE_DEBUG": "1",
+            "CMAKE_TOOLCHAIN_FILE": "/Users/student/MSVC/cmake/ClangMSVC.cmake",
+            "GEODE_DISABLE_FMT_CONSTEVAL": "1"
+        }
+    },
+    {
+        "name": "android-crosscompile",
+        "preferredGenerator": {
+            "name": "Ninja"
+        },
+        "toolchainFile": "/Applications/AndroidNDK.app/Contents/NDK/build/cmake/android.toolchain.cmake",
+        "cmakeSettings" : {
+            "ANDROID_ABI": "armeabi-v7a",
+            "ANDROID_ARM_NEON": "ON",
+            "ANDROID_PLATFORM": "android-28",
+            "CMAKE_BUILD_TYPE": "Debug",
+            "CMAKE_TOOLCHAIN_FILE": "/Applications/AndroidNDK.app/Contents/NDK/build/cmake/android.toolchain.cmake",
+            "GEODE_DISABLE_FMT_CONSTEVAL": "1",
+            "GEODE_TARGET_PLATFORM": "Android"
+        }
+    }
+]

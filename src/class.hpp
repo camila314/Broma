@@ -41,7 +41,12 @@ namespace broma {
 			scratch->wip_field.parent = scratch->wip_class.name;
 			static size_t index = 0;
 			scratch->wip_field.field_id = index++;
+			scratch->wip_field.links = scratch->wip_link_platform;
+			scratch->wip_field.missing = scratch->wip_missing_platform;
 			scratch->wip_class.fields.push_back(scratch->wip_field);
+
+			scratch->wip_link_platform = scratch->wip_class.links;
+			scratch->wip_missing_platform = scratch->wip_class.missing;
 		}
 	};
 
@@ -102,6 +107,7 @@ namespace broma {
 			//std::cout << "class end\n";
 			scratch->wip_class = Class();
 			scratch->wip_link_platform = Platform::None;
+			scratch->wip_missing_platform = Platform::None;
 		}
 	};
 
@@ -118,6 +124,7 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_class.links = scratch->wip_link_platform;
+			scratch->wip_class.missing = scratch->wip_missing_platform;
 		}
 	};
 } // namespace broma
