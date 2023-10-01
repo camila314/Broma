@@ -13,7 +13,6 @@ namespace broma {
 	/// @brief A function signature / prototype.
 	struct function_proto :
 		seq <rule_begin<function_proto>,
-			opt<attribute>,
 			sep,
 			tagged_rule<function_proto, type>,
 			sep,
@@ -71,7 +70,7 @@ namespace broma {
 	///
 	/// This allows some more qualifiers than the free function prototype.
 	struct member_function_proto :
-		seq<rule_begin<member_function_proto>, opt<attribute>, sep, sor<
+		seq<rule_begin<member_function_proto>, sep, sor<
 			// ctor, dtor
 			seq<
 				named_rule("structor", success),
