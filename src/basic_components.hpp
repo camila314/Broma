@@ -85,6 +85,7 @@ namespace broma {
 	keyword(win);
 	keyword(ios);
 	keyword(android);
+	keyword(android32);
 	keyword(android64);
 	keyword(PAD);
 
@@ -101,5 +102,5 @@ namespace broma {
 
 	/// @brief A platform identifier (mac, win, ios, android).
 	template <typename T>
-	struct tagged_platform : tagged_for_each<T, sor<keyword_mac, keyword_win, keyword_ios, keyword_android, keyword_android64>> {};
+	struct tagged_platform : tagged_for_each<T, sor<keyword_mac, keyword_win, keyword_ios, keyword_android, keyword_android32, keyword_android64>> {};
 } // namespace broma

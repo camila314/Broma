@@ -121,7 +121,14 @@ namespace broma {
 	struct run_action<tagged_rule<link_attribute, keyword_android>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Android;
+			scratch->wip_link_platform |= Platform::Android32 | Platform::Android64;
+		}
+	};
+	template <>
+	struct run_action<tagged_rule<link_attribute, keyword_android32>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_link_platform |= Platform::Android32;
 		}
 	};
 	template <>
@@ -165,12 +172,18 @@ namespace broma {
 			scratch->wip_missing_platform |= Platform::Windows;
 		}
 	};
-
 	template <>
 	struct run_action<tagged_rule<missing_attribute, keyword_android>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Android;
+			scratch->wip_missing_platform |= Platform::Android32 | Platform::Android64;
+		}
+	};
+	template <>
+	struct run_action<tagged_rule<missing_attribute, keyword_android32>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_missing_platform |= Platform::Android32;
 		}
 	};
 	template <>

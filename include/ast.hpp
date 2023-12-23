@@ -15,7 +15,8 @@ namespace broma {
 		Windows = 2,
 		Android = 4,
 		iOS = 8,
-		Android64 = 16,
+		Android32 = 16,
+		Android64 = 32,
 	};
 
 	inline Platform operator|(Platform a, Platform b) {
@@ -41,7 +42,7 @@ namespace broma {
 		ptrdiff_t mac = -1;
 		ptrdiff_t ios = -1;
 		ptrdiff_t win = -1;
-		ptrdiff_t android = -1;
+		ptrdiff_t android32 = -1;
 		ptrdiff_t android64 = -1;
 	};
 

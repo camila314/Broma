@@ -52,10 +52,10 @@ namespace broma {
 		}
 	};
 	template <>
-	struct run_action<tagged_rule<bind, keyword_android>> {
+	struct run_action<tagged_rule<bind, keyword_android32>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::Android;
+			scratch->wip_bind_platform = Platform::Android32;
 		}
 	};
 	template <>
@@ -82,8 +82,11 @@ namespace broma {
 				case Platform::Windows:
 					scratch->wip_bind.win = out;
 					break;
-				case Platform::Android:
-					scratch->wip_bind.android = out;
+				case Platform::Android32:
+					scratch->wip_bind.android32 = out;
+					break;
+				case Platform::Android64:
+					scratch->wip_bind.android64 = out;
 					break;
 				default:
 					break;
