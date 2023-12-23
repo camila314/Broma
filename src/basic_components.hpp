@@ -7,7 +7,8 @@ namespace broma {
 	/// @brief C and C++-style comments.
 	struct comment : 
 		disable<sor<
-			seq<ascii::string<'/', '/'>, not_at<one<'/'>>, until<eolf>>
+			seq<ascii::string<'/', '/'>, not_at<one<'/'>>, until<eolf>>,
+			seq<ascii::string<'/', '*'>, until<seq<ascii::string<'*', '/'>>>>,
 		>> {};
 
 	/// @brief Noisy filler grammar elements we want to ignore when parsing.
