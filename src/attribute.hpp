@@ -56,7 +56,7 @@ namespace broma {
 	/// @brief All allowed C++ attributes.
 	///
 	/// Currently, this includes the `docs(...)`, `depends(...)`, `link(...)` and `missing(...)` attributes.
-	struct attribute : 
+	struct attribute_normal : 
 		seq<
 			ascii::string<'[', '['>,
 			if_then_else<
@@ -64,12 +64,20 @@ namespace broma {
 				success,
 				list<seq<
 					sep,
-					sor<docs_attribute, depends_attribute, link_attribute, missing_attribute>,
+					sor<depends_attribute, link_attribute, missing_attribute>,
 					sep
 				>, one<','>>
 			>,
 			ascii::string<']', ']'>
 		> {};
+
+	struct attribute : seq<
+		sep, 
+		opt<list<docs_attribute, sep>>,
+		sep,
+		opt<attribute_normal>
+	> {};
+
 
 	// depends
 
@@ -89,10 +97,10 @@ namespace broma {
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			auto docs = input.string(); //.substr(0, input.string().size() - 1);
 			if (scratch->is_class) {
-				scratch->wip_mem_fn_proto.docs += docs;
+				scratch->wip_mem_fn_proto.docs += docs + '\n';
 			}
 			else {
-				scratch->wip_fn_proto.docs += docs;
+				scratch->wip_fn_proto.docs += docs + '\n';
 			}
 		}
 	};
