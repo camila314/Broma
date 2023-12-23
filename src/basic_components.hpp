@@ -7,7 +7,7 @@ namespace broma {
 	/// @brief C and C++-style comments.
 	struct comment : 
 		disable<sor<
-			if_must<at<ascii::string<'/', '/'>, not_at<one<'/'>>>, until<eolf>>,
+			seq<at<ascii::string<'/', '/'>, not_at<one<'/'>>>, until<eolf>>,
 			seq<ascii::string<'/', '*'>, until<seq<ascii::string<'*', '/'>>>>
 		>> {};
 
