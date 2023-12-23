@@ -22,7 +22,10 @@ namespace broma {
 			one<')'>
 		> {};
 
-	struct docs_attribute : seq<ascii::string<'/', '*'>, tagged_rule<docs_attribute, string_literal>, until<seq<ascii::string<'*', '/'>>>> /*basic_attribute<TAO_PEGTL_KEYWORD("docs"), tagged_rule<docs_attribute, string_literal>>*/ {};
+	struct docs_literal : until<eolf> {};
+	struct docs_attribute : seq<ascii::string<'/', '/', '/'>, tagged_rule<docs_attribute, docs_literal> > {};
+	
+	// seq<ascii::string<'/', '*'>, tagged_rule<docs_attribute, string_literal>, until<seq<ascii::string<'*', '/'>>>> /*basic_attribute<TAO_PEGTL_KEYWORD("docs"), tagged_rule<docs_attribute, string_literal>>*/ {};
 	struct depends_attribute : basic_attribute<TAO_PEGTL_KEYWORD("depends"), tagged_rule<depends_attribute, qualified>> {};
 
 	template <typename Attribute>
@@ -84,12 +87,12 @@ namespace broma {
 	struct run_action<tagged_rule<docs_attribute, string_literal>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			auto docs = input.string().substr(1, input.string().size() - 1);
+			auto docs = input.string(); //.substr(0, input.string().size() - 1);
 			if (scratch->is_class) {
-				scratch->wip_mem_fn_proto.docs = docs;
+				scratch->wip_mem_fn_proto.docs += docs;
 			}
 			else {
-				scratch->wip_fn_proto.docs = docs;
+				scratch->wip_fn_proto.docs += docs;
 			}
 		}
 	};
