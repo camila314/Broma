@@ -58,6 +58,13 @@ namespace broma {
 			scratch->wip_bind_platform = Platform::Android;
 		}
 	};
+	template <>
+	struct run_action<tagged_rule<bind, keyword_android64>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_bind_platform = Platform::Android64;
+		}
+	};
 
 	template <>
 	struct run_action<tagged_rule<bind, hex>> {

@@ -22,7 +22,7 @@ namespace broma {
 			one<')'>
 		> {};
 
-	struct docs_attribute : basic_attribute<TAO_PEGTL_KEYWORD("docs"), tagged_rule<docs_attribute, string_literal>> {};
+	struct docs_attribute : seq<ascii::string<'/', '*'>, tagged_rule<docs_attribute, string_literal>, until<seq<ascii::string<'*', '/'>>>> /*basic_attribute<TAO_PEGTL_KEYWORD("docs"), tagged_rule<docs_attribute, string_literal>>*/ {};
 	struct depends_attribute : basic_attribute<TAO_PEGTL_KEYWORD("depends"), tagged_rule<depends_attribute, qualified>> {};
 
 	template <typename Attribute>
@@ -124,6 +124,13 @@ namespace broma {
 			scratch->wip_link_platform |= Platform::Android;
 		}
 	};
+	template <>
+	struct run_action<tagged_rule<link_attribute, keyword_android64>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_link_platform |= Platform::Android64;
+		}
+	};
 
 	template <>
 	struct run_action<rule_begin<link_attribute>> {
@@ -164,6 +171,13 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_missing_platform |= Platform::Android;
+		}
+	};
+	template <>
+	struct run_action<tagged_rule<missing_attribute, keyword_android64>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_missing_platform |= Platform::Android64;
 		}
 	};
 

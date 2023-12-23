@@ -15,6 +15,7 @@ namespace broma {
 		Windows = 2,
 		Android = 4,
 		iOS = 8,
+		Android64 = 16,
 	};
 
 	inline Platform operator|(Platform a, Platform b) {
@@ -41,6 +42,7 @@ namespace broma {
 		ptrdiff_t ios = -1;
 		ptrdiff_t win = -1;
 		ptrdiff_t android = -1;
+		ptrdiff_t android64 = -1;
 	};
 
 	/// @brief A C++ type declaration.

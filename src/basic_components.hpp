@@ -7,8 +7,7 @@ namespace broma {
 	/// @brief C and C++-style comments.
 	struct comment : 
 		disable<sor<
-			seq<ascii::string<'/', '/'>, until<eolf>>,
-			seq<ascii::string<'/', '*'>, until<seq<ascii::string<'*', '/'>>>>
+			seq<ascii::string<'/', '/'>, until<eolf>>
 		>> {};
 
 	/// @brief Noisy filler grammar elements we want to ignore when parsing.
@@ -86,6 +85,7 @@ namespace broma {
 	keyword(win);
 	keyword(ios);
 	keyword(android);
+	keyword(android64);
 	keyword(PAD);
 
 	#undef keyword
@@ -101,5 +101,5 @@ namespace broma {
 
 	/// @brief A platform identifier (mac, win, ios, android).
 	template <typename T>
-	struct tagged_platform : tagged_for_each<T, sor<keyword_mac, keyword_win, keyword_ios, keyword_android>> {};
+	struct tagged_platform : tagged_for_each<T, sor<keyword_mac, keyword_win, keyword_ios, keyword_android, keyword_android64>> {};
 } // namespace broma
