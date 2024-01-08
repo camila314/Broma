@@ -30,6 +30,8 @@ namespace broma {
 			for (auto& e : scratch.errors) {
 				std::cerr << "\t" << e.what() << "\n";
 			}
+
+			std::exit(1);
 		}
 
 		return root;

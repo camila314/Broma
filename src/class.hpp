@@ -93,7 +93,7 @@ namespace broma {
 			scratch->wip_class.name = input.string();
 
 			if (std::find(root->classes.begin(), root->classes.end(), input.string()) != root->classes.end()) {
-				scratch->errors.push_back(parse_error("Class duplicate!", input.position()));
+				scratch->errors.push_back(parse_error("Class duplicate! " + input.string(), input.position()));
 			}
 		}
 	};
