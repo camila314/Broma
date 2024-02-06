@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Restore cached hdoc binary
         id: hdoc-cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: build
           key: ${{ env.HDOC_VERSION }}
@@ -19,7 +19,7 @@ jobs:
           
       - name: Checkout hdoc repo
         if: steps.hdoc-cache.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'hdoc/hdoc'
           ref: ${{ env.HDOC_VERSION }}
@@ -37,13 +37,13 @@ jobs:
 
       - name: Upload hdoc binary to cache
         if: steps.hdoc-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: build
           key: ${{ env.HDOC_VERSION }}
 
       - name: Upload hdoc binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hdoc
           path: build/hdoc
@@ -53,13 +53,13 @@ jobs:
     needs: build-hdoc
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get compile_commands.json
         run: CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake -B build
 
       - name: Download hdoc binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: hdoc
 
@@ -73,7 +73,7 @@ jobs:
           ./hdoc --verbose
 
       - name: Upload docs
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: doc-build/
 
