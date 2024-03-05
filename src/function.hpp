@@ -13,7 +13,6 @@ namespace broma {
 	/// @brief A function signature / prototype.
 	struct function_proto :
 		seq <rule_begin<function_proto>,
-			opt<attribute>,
 			sep,
 			tagged_rule<function_proto, type>,
 			sep,
@@ -58,7 +57,12 @@ namespace broma {
 			Function f;
 			f.prototype = scratch->wip_fn_proto;
 			f.binds = scratch->wip_bind;
+			f.links = scratch->wip_link_platform;
+			f.missing = scratch->wip_missing_platform;
 			root->functions.push_back(f);
+
+			scratch->wip_link_platform = Platform::None;
+			scratch->wip_missing_platform = Platform::None;
 		}
 	};
 
@@ -66,7 +70,7 @@ namespace broma {
 	///
 	/// This allows some more qualifiers than the free function prototype.
 	struct member_function_proto :
-		seq<rule_begin<member_function_proto>, opt<attribute>, sep, sor<
+		seq<rule_begin<member_function_proto>, sep, sor<
 			// ctor, dtor
 			seq<
 				named_rule("structor", success),

@@ -31,7 +31,7 @@ namespace broma {
 		}
 	};
 
-	struct field : sor<inline_expr, pad_expr, member_expr, bind_expr, ool_expr> {};
+	struct field : seq<opt<attribute>, sor<inline_expr, pad_expr, member_expr, bind_expr, ool_expr>> {};
 
 	template <>
 	struct run_action<field> {
@@ -41,14 +41,20 @@ namespace broma {
 			scratch->wip_field.parent = scratch->wip_class.name;
 			static size_t index = 0;
 			scratch->wip_field.field_id = index++;
+			scratch->wip_field.links = scratch->wip_link_platform;
+			scratch->wip_field.missing = scratch->wip_missing_platform;
 			scratch->wip_class.fields.push_back(scratch->wip_field);
+
+			scratch->wip_link_platform = scratch->wip_class.links;
+			scratch->wip_missing_platform = scratch->wip_class.missing;
 		}
 	};
 
 	/// @brief A class declaration.
 	struct class_statement :
 	seq<
-		opt<attribute>,
+		rule_begin<class_statement>,
+		tagged_rule<class_statement, opt<attribute>>,
 		sep,
 		keyword_class,
 		whitespace,
@@ -87,7 +93,7 @@ namespace broma {
 			scratch->wip_class.name = input.string();
 
 			if (std::find(root->classes.begin(), root->classes.end(), input.string()) != root->classes.end()) {
-				scratch->errors.push_back(parse_error("Class duplicate!", input.position()));
+				scratch->errors.push_back(parse_error("Class duplicate! " + input.string(), input.position()));
 			}
 		}
 	};
@@ -99,8 +105,26 @@ namespace broma {
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			root->classes.push_back(std::move(scratch->wip_class));
 			//std::cout << "class end\n";
-			scratch->is_class = true;
 			scratch->wip_class = Class();
+			scratch->wip_link_platform = Platform::None;
+			scratch->wip_missing_platform = Platform::None;
+		}
+	};
+
+	template <>
+	struct run_action<rule_begin<class_statement>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->is_class = true;
+		}
+	};
+
+	template <>
+	struct run_action<tagged_rule<class_statement, opt<attribute>>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_class.links = scratch->wip_link_platform;
+			scratch->wip_class.missing = scratch->wip_missing_platform;
 		}
 	};
 } // namespace broma

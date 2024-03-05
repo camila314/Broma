@@ -10,18 +10,40 @@
 namespace broma {
 	/// @brief The platform currently being processed in a bind statement.
 	enum class Platform {
-		Mac,
-		iOS,
-		Windows,
-		Android
+		None = 0,
+		Mac = 1,
+		Windows = 2,
+		Android = 4,
+		iOS = 8,
+		Android32 = 16,
+		Android64 = 32,
 	};
+
+	inline Platform operator|(Platform a, Platform b) {
+		return static_cast<Platform>(static_cast<int>(a) | static_cast<int>(b));
+	}
+
+	inline Platform& operator|=(Platform& a, Platform b) {
+		a = a | b;
+		return a;
+	}
+
+	inline Platform operator&(Platform a, Platform b) {
+		return static_cast<Platform>(static_cast<int>(a) & static_cast<int>(b));
+	}
+
+	inline Platform& operator&=(Platform& a, Platform b) {
+		a = a & b;
+		return a;
+	}
 
 	/// @brief Binding offsets for each platform.
 	struct PlatformNumber {
-		size_t mac = 0;
-		size_t ios = 0;
-		size_t win = 0;
-		size_t android = 0;
+		ptrdiff_t mac = -1;
+		ptrdiff_t ios = -1;
+		ptrdiff_t win = -1;
+		ptrdiff_t android32 = -1;
+		ptrdiff_t android64 = -1;
 	};
 
 	/// @brief A C++ type declaration.
@@ -85,9 +107,9 @@ namespace broma {
 
 	/// @brief A class's member variables.
 	struct MemberField {
-		std::string name;
-		Type type;
-		size_t count = 0;
+		std::string name; ///< The name of the field.
+		Type type; ///< The type of the field.
+		size_t count = 0; ///< The number of elements in the field when it's an array (pretty much unused since we use std::array).
 	};
 
 	/// @brief Any class padding.
@@ -117,6 +139,8 @@ namespace broma {
 		size_t field_id; ///< The index of the field. This starts from 0 and counts up across all classes.
 		std::string parent; ///< The name of the parent class.
 		std::variant<InlineField, OutOfLineField, FunctionBindField, PadField, MemberField> inner;
+		Platform links; ///< All the platforms that link the field
+		Platform missing; ///< All the platforms that are missing the field
 
 		/// @brief Cast the field into a variant type. This is useful to extract data from the field.
 		template <typename T>
@@ -148,6 +172,9 @@ namespace broma {
 										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
 		std::vector<Field> fields; ///< All the fields parsed in the class.
 
+		Platform links; ///< All the platforms that link the class
+		Platform missing; ///< All the platforms that are missing the class
+
 		inline bool operator==(Class const& c) const {
 			return name == c.name;
 		}
@@ -160,6 +187,8 @@ namespace broma {
 	struct Function {
 		FunctionProto prototype; ///< The free function's signature.
 		PlatformNumber binds; ///< The offsets of free function, separated per platform.
+		Platform links; ///< All the platforms that link the function
+		Platform missing; ///< All the platforms that are missing the function
 	};
 
 	/// @brief Broma's root grammar (the root AST).
