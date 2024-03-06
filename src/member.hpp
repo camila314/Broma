@@ -59,6 +59,8 @@ namespace broma {
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			if (scratch->wip_platform_block.has_value())
 				scratch->wip_field.get_as<MemberField>()->platform = scratch->wip_platform_block.value();
+			else
+				scratch->wip_field.get_as<MemberField>()->platform = Platform::None;
 
 			scratch->wip_field.get_as<MemberField>()->type = scratch->wip_type;
 		}
