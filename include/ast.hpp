@@ -15,8 +15,8 @@ namespace broma {
 		Windows = 2,
 		Android = 4,
 		iOS = 8,
-		Android32 = 24,
-		Android64 = 40,
+		Android32 = 20, // includes Android
+		Android64 = 36, // includes Android
 	};
 
 	inline Platform str_to_platform(std::string const& str) {
