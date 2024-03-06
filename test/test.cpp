@@ -3,6 +3,8 @@
 #include <iostream>
 
 void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
+
+    std::cout << "\tlinks: " << (long)func.attributes.links << "\n";
     std::cout << "\t" << func.ret.name << " " << func.name << "(";
     for (auto arg : func.args) {
         std::cout << arg.first.name << " " << arg.second << ", ";
@@ -17,6 +19,7 @@ void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
 void print_ast(broma::Root& ast) {
     std::cout << "Classes: " << ast.classes.size() << "\n";
     for (auto cls : ast.classes) {
+        std::cout << "links: " << (long)cls.attributes.links << "\n";
         std::cout << "class " << cls.name << " {\n";
         for (auto field : cls.fields) {
             if (auto func = field.get_as<broma::FunctionBindField>()) {

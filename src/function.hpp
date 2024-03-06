@@ -96,6 +96,10 @@ namespace broma {
 	struct run_action<rule_begin<member_function_proto>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_attributes = Attributes();
+			scratch->wip_attributes.links = scratch->wip_class.attributes.links;
+			scratch->wip_attributes.missing = scratch->wip_class.attributes.missing;
+
 			scratch->wip_mem_fn_proto = MemberFunctionProto();
 		}
 	};
@@ -105,10 +109,6 @@ namespace broma {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			scratch->wip_mem_fn_proto.attributes = scratch->wip_attributes;
-
-			scratch->wip_attributes = Attributes();
-			scratch->wip_attributes.links = scratch->wip_class.attributes.links;
-			scratch->wip_attributes.missing = scratch->wip_class.attributes.missing;
 
 			for (auto& f : scratch->wip_class.fields) {
 				if (auto fn = f.get_fn()) {
