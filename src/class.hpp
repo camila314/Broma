@@ -87,7 +87,7 @@ namespace broma {
 				throw parse_error("Class subclasses itself", input.position());
 
 			scratch->wip_class.superclasses.push_back(input.string());
-			scratch->wip_class.depends.push_back(input.string());
+			scratch->wip_class.attributes.depends.push_back(input.string());
 		}
 	};
 

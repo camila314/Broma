@@ -12,7 +12,7 @@ namespace broma	{
 	/// @param output A vector to output the sorted classes to.
 	inline void	sort_class(Class cls, Root&	root, std::vector<Class>& output) {
 		root.classes.erase(std::remove(root.classes.begin(), root.classes.end(), cls), root.classes.end());
-		for	(auto name : cls.depends) {
+		for	(auto name : cls.attributes.depends) {
 			if (root[name])
 				sort_class(*root[name],	root, output);
 		}

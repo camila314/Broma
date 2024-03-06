@@ -185,7 +185,6 @@ namespace broma {
 		Attributes attributes;
 		std::string name; ///< The name of the class.
 		std::vector<std::string> superclasses; ///< Parent classes that the current class inherits.
-		std::vector<std::string> depends; ///< Classes the current class depends on.
 										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
 		std::vector<Field> fields; ///< All the fields parsed in the class.
 
