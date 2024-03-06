@@ -94,25 +94,13 @@ namespace broma {
 
 			size_t out = std::stoul(input.string(), nullptr, 16);
 
-			switch (scratch->wip_platform_block.value()) {
-				case Platform::Mac:
-					scratch->wip_bind.mac = out;
-					break;
-				case Platform::iOS:
-					scratch->wip_bind.ios = out;
-					break;
-				case Platform::Windows:
-					scratch->wip_bind.win = out;
-					break;
-				case Platform::Android32:
-					scratch->wip_bind.android32 = out;
-					break;
-				case Platform::Android64:
-					scratch->wip_bind.android64 = out;
-					break;
-				default:
-					break;
-			}
+			auto platform = scratch->wip_platform_block.value();
+
+			scratch->wip_bind.mac = (platform & Platform::Mac) != Platform::None ? out : 0;
+			scratch->wip_bind.ios = (platform & Platform::iOS) != Platform::None ? out : 0;
+			scratch->wip_bind.win = (platform & Platform::Windows) != Platform::None ? out : 0;
+			scratch->wip_bind.android32 = (platform & Platform::Android32) != Platform::None ? out : 0;
+			scratch->wip_bind.android64 = (platform & Platform::Android64) != Platform::None ? out : 0;
 		}
 	};
 

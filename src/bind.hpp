@@ -42,11 +42,6 @@ namespace broma {
 	struct run_action<tagged_rule<bind, hex>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			if (scratch->wip_platform_block.has_value()) {
-				throw parse_error("cannot use this inside a platform expression", input);
-				return;
-			}
-
 			size_t out = std::stoul(input.string(), nullptr, 16);
 
 			switch (scratch->wip_bind_platform) {
