@@ -31,7 +31,7 @@ namespace broma {
 		}
 	};
 
-	struct field : seq<opt<attribute>, sor<inline_expr, pad_expr, member_expr, bind_expr, ool_expr>> {};
+	struct field : sor<inline_expr, pad_expr, member_expr, bind_expr, ool_expr> {};
 
 	template <>
 	struct run_action<field> {
@@ -41,22 +41,27 @@ namespace broma {
 			scratch->wip_field.parent = scratch->wip_class.name;
 			static size_t index = 0;
 			scratch->wip_field.field_id = index++;
-			scratch->wip_field.links = scratch->wip_link_platform;
-			scratch->wip_field.missing = scratch->wip_missing_platform;
 			scratch->wip_class.fields.push_back(scratch->wip_field);
-
-			scratch->wip_link_platform = scratch->wip_class.links;
-			scratch->wip_missing_platform = scratch->wip_class.missing;
 		}
 	};
+
+	struct platform_expr : seq<
+		list<seq<
+			sep,
+			tagged_platform<platform_expr>
+		>, one<','>>,
+		sep,
+		one<'{'>,
+		sep,
+		until<one<'}'>, sep, must<field>, sep>
+	> {};
 
 	/// @brief A class declaration.
 	struct class_statement :
 	seq<
 		rule_begin<class_statement>,
-		tagged_rule<class_statement, opt<attribute>>,
 		sep,
-		keyword_class,
+		tagged_rule<class_statement, keyword_class>,
 		whitespace,
 		named_rule("class name", qualified),
 		sep,
@@ -71,7 +76,7 @@ namespace broma {
 		>,
 		one<'{'>,
 		sep,
-		until<one<'}'>, sep, must<field>, sep>
+		until<one<'}'>, sep, must<sor<field, platform_expr>>, sep>
 	> {};
 
 	template <>
@@ -98,16 +103,12 @@ namespace broma {
 		}
 	};
 
-
 	template <>
 	struct run_action<class_statement> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			root->classes.push_back(std::move(scratch->wip_class));
-			//std::cout << "class end\n";
 			scratch->wip_class = Class();
-			scratch->wip_link_platform = Platform::None;
-			scratch->wip_missing_platform = Platform::None;
 		}
 	};
 
@@ -120,11 +121,30 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<tagged_rule<class_statement, opt<attribute>>> {
+	struct run_action<tagged_rule<class_statement, keyword_class>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_class.links = scratch->wip_link_platform;
-			scratch->wip_class.missing = scratch->wip_missing_platform;
+			scratch->wip_class.attributes = scratch->wip_attributes;
+			scratch->wip_attributes = Attributes();
+		}
+	};
+
+	template <>
+	struct run_action<tagged_platform<platform_expr>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			if (!scratch->wip_platform_block.has_value())
+				scratch->wip_platform_block = str_to_platform(input.string());
+			else
+				scratch->wip_platform_block = (scratch->wip_platform_block.value() | str_to_platform(input.string()));
+		}
+	};
+
+	template <>
+	struct run_action<platform_expr> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_platform_block = {};
 		}
 	};
 } // namespace broma

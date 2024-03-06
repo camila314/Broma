@@ -31,38 +31,10 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<tagged_rule<bind, keyword_mac>> {
+	struct run_action<tagged_platform<bind>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::Mac;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<bind, keyword_ios>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::iOS;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<bind, keyword_win>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::Windows;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<bind, keyword_android32>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::Android32;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<bind, keyword_android64>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_bind_platform = Platform::Android64;
+			scratch->wip_bind_platform = str_to_platform(input.string());
 		}
 	};
 
@@ -70,6 +42,11 @@ namespace broma {
 	struct run_action<tagged_rule<bind, hex>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
+			if (scratch->wip_platform_block.has_value()) {
+				throw parse_error("cannot use this inside a platform expression", input);
+				return;
+			}
+
 			size_t out = std::stoul(input.string(), nullptr, 16);
 
 			switch (scratch->wip_bind_platform) {

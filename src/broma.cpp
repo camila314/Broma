@@ -14,7 +14,7 @@ using namespace tao::pegtl;
 
 namespace broma {
 	/// @brief Broma's top-level grammar.
-	struct root_grammar : until<eof, sep, must<sor<include_expr, class_statement, function>>, sep> {};
+	struct root_grammar : until<eof, sep, must<sor<include_expr, seq<opt<attribute>, sor<class_statement, function>>>>, sep> {};
 
 	Root parse_file(std::string const& fname) {
 		file_input<> input(fname);

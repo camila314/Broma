@@ -54,15 +54,13 @@ namespace broma {
 	struct run_action<function> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_fn_proto.attributes = scratch->wip_attributes;
+
 			Function f;
 			f.prototype = scratch->wip_fn_proto;
-			f.binds = scratch->wip_bind;
-			f.links = scratch->wip_link_platform;
-			f.missing = scratch->wip_missing_platform;
 			root->functions.push_back(f);
 
-			scratch->wip_link_platform = Platform::None;
-			scratch->wip_missing_platform = Platform::None;
+			scratch->wip_attributes = Attributes();
 		}
 	};
 
@@ -70,7 +68,7 @@ namespace broma {
 	///
 	/// This allows some more qualifiers than the free function prototype.
 	struct member_function_proto :
-		seq<rule_begin<member_function_proto>, sep, sor<
+		seq<rule_begin<member_function_proto>, sep, opt<attribute>, sep, sor<
 			// ctor, dtor
 			seq<
 				named_rule("structor", success),
@@ -106,6 +104,12 @@ namespace broma {
 	struct run_action<member_function_proto> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_mem_fn_proto.attributes = scratch->wip_attributes;
+
+			scratch->wip_attributes = Attributes();
+			scratch->wip_attributes.links = scratch->wip_class.attributes.links;
+			scratch->wip_attributes.missing = scratch->wip_class.attributes.missing;
+
 			for (auto& f : scratch->wip_class.fields) {
 				if (auto fn = f.get_fn()) {
 					if (*fn == scratch->wip_mem_fn_proto) {

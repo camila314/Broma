@@ -19,6 +19,16 @@ namespace broma {
 		Android64 = 32,
 	};
 
+	inline Platform str_to_platform(std::string const& str) {
+		if (str == "mac") return Platform::Mac;
+		if (str == "win") return Platform::Windows;
+		if (str == "android") return Platform::Android;
+		if (str == "ios") return Platform::iOS;
+		if (str == "android32") return Platform::Android32;
+		if (str == "android64") return Platform::Android64;
+		return Platform::None;
+	}
+
 	inline Platform operator|(Platform a, Platform b) {
 		return static_cast<Platform>(static_cast<int>(a) | static_cast<int>(b));
 	}
@@ -56,11 +66,18 @@ namespace broma {
 		}
 	};
 
-	/// @brief The signature of a free function.
+	/// @brief List of attributes that could be applied to a class or a function
+	struct Attributes {
+		std::string docs; ///< Any docstring pulled from a `[[docs(...)]]` attribute.
+		Platform links; ///< All the platforms that link the class or function
+		Platform missing; ///< All the platforms that are missing the class or function
+		std::vector<std::string> depends; ///< List of classes that this class or function depends on
+	};
+
 	struct FunctionProto {
+		Attributes attributes; ///< Attributes associated with the function.
 		Type ret; ///< The return type of the function.
 		std::vector<std::pair<Type, std::string>> args; ///< All arguments, represented by their type and their name.
-		std::string docs; ///< Any docstring pulled from a `[[docs(...)]]` attribute.
 		std::string name; ///< The function's name.
 
 		inline bool operator==(FunctionProto const& f) const {
@@ -107,6 +124,7 @@ namespace broma {
 
 	/// @brief A class's member variables.
 	struct MemberField {
+		Platform platform; ///< For platform-specific members, all platforms this member is defined on 
 		std::string name; ///< The name of the field.
 		Type type; ///< The type of the field.
 		size_t count = 0; ///< The number of elements in the field when it's an array (pretty much unused since we use std::array).
@@ -139,8 +157,6 @@ namespace broma {
 		size_t field_id; ///< The index of the field. This starts from 0 and counts up across all classes.
 		std::string parent; ///< The name of the parent class.
 		std::variant<InlineField, OutOfLineField, FunctionBindField, PadField, MemberField> inner;
-		Platform links; ///< All the platforms that link the field
-		Platform missing; ///< All the platforms that are missing the field
 
 		/// @brief Cast the field into a variant type. This is useful to extract data from the field.
 		template <typename T>
@@ -166,14 +182,12 @@ namespace broma {
 
 	/// @brief A top-level class declaration.
 	struct Class {
+		Attributes attributes;
 		std::string name; ///< The name of the class.
 		std::vector<std::string> superclasses; ///< Parent classes that the current class inherits.
 		std::vector<std::string> depends; ///< Classes the current class depends on.
 										  ///< This includes parent classes, and any classes declared in a `[[depends(...)]]` attribute.
 		std::vector<Field> fields; ///< All the fields parsed in the class.
-
-		Platform links; ///< All the platforms that link the class
-		Platform missing; ///< All the platforms that are missing the class
 
 		inline bool operator==(Class const& c) const {
 			return name == c.name;
@@ -187,8 +201,6 @@ namespace broma {
 	struct Function {
 		FunctionProto prototype; ///< The free function's signature.
 		PlatformNumber binds; ///< The offsets of free function, separated per platform.
-		Platform links; ///< All the platforms that link the function
-		Platform missing; ///< All the platforms that are missing the function
 	};
 
 	/// @brief Broma's root grammar (the root AST).

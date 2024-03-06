@@ -85,131 +85,53 @@ namespace broma {
 	struct run_action<tagged_rule<depends_attribute, qualified>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_class.depends.push_back(input.string());
+			scratch->wip_attributes.depends.push_back(input.string());
 		}
 	};
 
 	// docs
 
 	template <>
-	struct run_action<tagged_rule<docs_attribute, string_literal>> {
+	struct run_action<tagged_rule<docs_attribute, docs_literal>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			auto docs = input.string(); //.substr(0, input.string().size() - 1);
-			if (scratch->is_class) {
-				scratch->wip_mem_fn_proto.docs += docs + '\n';
-			}
-			else {
-				scratch->wip_fn_proto.docs += docs + '\n';
-			}
+			scratch->wip_attributes.docs += input.string() + '\n';
 		}
 	};
 
 	// link
 
 	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_mac>> {
+	struct run_action<rule_begin<link_attribute>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Mac;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_ios>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::iOS;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_win>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Windows;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_android>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Android32 | Platform::Android64;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_android32>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Android32;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<link_attribute, keyword_android64>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform |= Platform::Android64;
+			scratch->wip_attributes.links = Platform::None;
 		}
 	};
 
 	template <>
-	struct run_action<rule_begin<link_attribute>> {
+	struct run_action<tagged_platform<link_attribute>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_link_platform = Platform::None;
+			scratch->wip_attributes.links |= str_to_platform(input.string());
 		}
 	};
 
 	// missing
 
 	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_mac>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Mac;
-		}
-	};
-
-	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_ios>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::iOS;
-		}
-	};
-
-	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_win>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Windows;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_android>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Android32 | Platform::Android64;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_android32>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Android32;
-		}
-	};
-	template <>
-	struct run_action<tagged_rule<missing_attribute, keyword_android64>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform |= Platform::Android64;
-		}
-	};
-
-	template <>
 	struct run_action<rule_begin<missing_attribute>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			scratch->wip_missing_platform = Platform::None;
+			scratch->wip_attributes.missing = Platform::None;
 		}
 	};
+	template <>
+	struct run_action<tagged_platform<missing_attribute>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_attributes.missing |= str_to_platform(input.string());
+		}
+	};
+
 } // namespace broma
