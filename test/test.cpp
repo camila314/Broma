@@ -4,7 +4,7 @@
 
 void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
 
-    std::cout << "\tlinks: " << (long)func.attributes.links << "\n";
+    std::cout << "\tmissing: " << (long)func.attributes.missing << "\n";
     std::cout << "\t" << func.ret.name << " " << func.name << "(";
     for (auto arg : func.args) {
         std::cout << arg.first.name << " " << arg.second << ", ";
