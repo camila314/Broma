@@ -69,8 +69,8 @@ namespace broma {
 	/// @brief List of attributes that could be applied to a class or a function
 	struct Attributes {
 		std::string docs; ///< Any docstring pulled from a `[[docs(...)]]` attribute.
-		Platform links; ///< All the platforms that link the class or function
-		Platform missing; ///< All the platforms that are missing the class or function
+		Platform links = Platform::None; ///< All the platforms that link the class or function
+		Platform missing = Platform::None; ///< All the platforms that are missing the class or function
 		std::vector<std::string> depends; ///< List of classes that this class or function depends on
 	};
 
