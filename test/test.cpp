@@ -11,7 +11,8 @@ void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
     }
     std::cout << ") = " << std::hex;
     std::cout << "win 0x" << addrs.win << ", ";
-    std::cout << "mac 0x" << addrs.mac << ", ";
+    std::cout << "imac 0x" << addrs.imac << ", ";
+    std::cout << "m1 0x" << addrs.m1 << ", ";
     std::cout << "ios 0x" << addrs.ios << ";\n";
     std::cout << std::dec;
 }

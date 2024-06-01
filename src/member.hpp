@@ -84,8 +84,10 @@ namespace broma {
 			scratch->wip_bind = p;
 
 			if (auto platform = scratch->wip_platform_block) {
-				if ((platform.value() & Platform::Mac) != Platform::None)
-					scratch->wip_bind.mac = 0;
+				if ((platform.value() & Platform::MacIntel) != Platform::None)
+					scratch->wip_bind.imac = 0;
+				if ((platform.value() & Platform::MacArm) != Platform::None)
+					scratch->wip_bind.m1 = 0;
 				if ((platform.value() & Platform::iOS) != Platform::None)
 					scratch->wip_bind.ios = 0;
 				if ((platform.value() & Platform::Windows) != Platform::None)
@@ -111,7 +113,8 @@ namespace broma {
 
 			auto platform = scratch->wip_platform_block.value();
 
-			scratch->wip_bind.mac = (platform & Platform::Mac) != Platform::None ? out : 0;
+			scratch->wip_bind.imac = (platform & Platform::MacIntel) != Platform::None ? out : 0;
+			scratch->wip_bind.m1 = (platform & Platform::MacArm) != Platform::None ? out : 0;
 			scratch->wip_bind.ios = (platform & Platform::iOS) != Platform::None ? out : 0;
 			scratch->wip_bind.win = (platform & Platform::Windows) != Platform::None ? out : 0;
 			scratch->wip_bind.android32 = (platform & Platform::Android32) != Platform::None ? out : 0;

@@ -15,8 +15,10 @@ namespace broma {
 		Windows = 2,
 		Android = 4,
 		iOS = 8,
-		Android32 = 20, // includes Android
-		Android64 = 36, // includes Android
+		Android32 = 16 | 4, // includes Android
+		Android64 = 32 | 4, // includes Android
+		MacIntel = 64 | 1,
+		MacArm = 128 | 1,
 	};
 
 	inline Platform str_to_platform(std::string const& str) {
@@ -24,6 +26,8 @@ namespace broma {
 		if (str == "win") return Platform::Windows;
 		if (str == "android") return Platform::Android;
 		if (str == "ios") return Platform::iOS;
+		if (str == "imac") return Platform::MacIntel;
+		if (str == "m1") return Platform::MacArm;
 		if (str == "android32") return Platform::Android32;
 		if (str == "android64") return Platform::Android64;
 		return Platform::None;
@@ -49,7 +53,8 @@ namespace broma {
 
 	/// @brief Binding offsets for each platform.
 	struct PlatformNumber {
-		ptrdiff_t mac = -1;
+		ptrdiff_t imac = -1;
+		ptrdiff_t m1 = -1;
 		ptrdiff_t ios = -1;
 		ptrdiff_t win = -1;
 		ptrdiff_t android32 = -1;
