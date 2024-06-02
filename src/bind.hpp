@@ -67,9 +67,9 @@ namespace broma {
 			}
 
 			switch (scratch->wip_bind_platform) {
-				// define mac as intel mac to avoid exploding the older bindings
 				case Platform::Mac:
 					scratch->wip_bind.imac = out;
+					scratch->wip_bind.m1 = out;
 					break;
 				case Platform::MacIntel:
 					scratch->wip_bind.imac = out;
