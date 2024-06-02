@@ -45,6 +45,10 @@ namespace broma {
 			size_t out = std::stoul(input.string(), nullptr, 16);
 
 			switch (scratch->wip_bind_platform) {
+				// define mac as intel mac to avoid exploding the older bindings
+				case Platform::Mac:
+					scratch->wip_bind.imac = out;
+					break;
 				case Platform::MacIntel:
 					scratch->wip_bind.imac = out;
 					break;
