@@ -16,10 +16,18 @@ namespace broma {
 				sep,
 				tagged_platform<bind>,
 				sep,
-				tagged_rule<bind, hex>
+				tagged_rule<bind, sor<hex, keyword_default>>
 			>, one<','>>,
 			sep
-		>, one<';'>> {};
+		>, sor<tagged_rule<bind, brace_start>, one<';'>>> {};
+
+	template <>
+	struct run_action<tagged_rule<bind, brace_start>> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_fn_body = input.string();
+		}
+	};
 
 	template <>
 	struct run_action<rule_begin<bind>> {
@@ -39,10 +47,19 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<tagged_rule<bind, hex>> {
+	struct run_action<tagged_rule<bind, sor<hex, keyword_default>>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			size_t out = std::stoul(input.string(), nullptr, 16);
+			auto text = input.string();
+
+			std::size_t out = -1;
+			if (text == "default") {
+				// special internal constant
+				// feel free to increment if needed (it isn't exposed anywhere public)
+				out = -3;
+			} else {
+				out = std::stoul(text, nullptr, 16);
+			}
 
 			switch (scratch->wip_bind_platform) {
 				// define mac as intel mac to avoid exploding the older bindings
@@ -60,6 +77,11 @@ namespace broma {
 					break;
 				case Platform::Windows:
 					scratch->wip_bind.win = out;
+					break;
+				// for default syntax
+				case Platform::Android:
+					scratch->wip_bind.android32 = out;
+					scratch->wip_bind.android64 = out;
 					break;
 				case Platform::Android32:
 					scratch->wip_bind.android32 = out;

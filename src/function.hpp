@@ -195,19 +195,19 @@ namespace broma {
 		}
 	};
 
-	/// @brief A member function body (should go in a .cpp file).
-	struct ool_expr : seq<member_function_proto, sep, tagged_rule<ool_expr, brace_start>> {};
-
-	template <>
-	struct run_action<tagged_rule<ool_expr, brace_start>> {
-		template <typename T>
-		static void apply(T& input, Root* root, ScratchData* scratch) {
-			OutOfLineField f;
-			f.prototype = scratch->wip_mem_fn_proto;
-			f.inner = input.string();
-			scratch->wip_field.inner = f;
+	std::ptrdiff_t normalizePlatformNumber(std::ptrdiff_t num, bool has_inline) {
+		// -1 = unspecified. if there's an inline, default to inlined constant
+		if (num == -1 && has_inline) {
+			return -2;
 		}
-	};
+
+		// -3 = explicit default, so it returns to unspecified after inline is applied
+		if (num == -3) {
+			return -1;
+		}
+
+		return num;
+	}
 
 	/// @brief An offset binding expression.
 	struct bind_expr : seq<member_function_proto, sep, bind> {};
@@ -219,7 +219,21 @@ namespace broma {
 			FunctionBindField f;
 			f.prototype = scratch->wip_mem_fn_proto;
 			f.binds = scratch->wip_bind;
+
+			// normalize platform bindings. this is probably not very efficient, but whatever
+			// should probably do lookahead lol
+
+			auto has_inline = !scratch->wip_fn_body.empty();
+			f.binds.android32 = normalizePlatformNumber(f.binds.android32, has_inline);
+			f.binds.android64 = normalizePlatformNumber(f.binds.android64, has_inline);
+			f.binds.imac = normalizePlatformNumber(f.binds.imac, has_inline);
+			f.binds.m1 = normalizePlatformNumber(f.binds.m1, has_inline);
+			f.binds.ios = normalizePlatformNumber(f.binds.ios, has_inline);
+			f.binds.win = normalizePlatformNumber(f.binds.win, has_inline);
+
+			f.inner = scratch->wip_fn_body;
 			scratch->wip_field.inner = f;
+			scratch->wip_fn_body.clear();
 		}
 	};
 } // namespace broma

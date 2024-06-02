@@ -2,7 +2,7 @@
 #include <broma.hpp>
 #include <iostream>
 
-void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
+void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs, std::string inner = "") {
 
     std::cout << "\tmissing: " << (long)func.attributes.missing << "\n";
     std::cout << "\t" << func.ret.name << " " << func.name << "(";
@@ -13,7 +13,14 @@ void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs) {
     std::cout << "win 0x" << addrs.win << ", ";
     std::cout << "imac 0x" << addrs.imac << ", ";
     std::cout << "m1 0x" << addrs.m1 << ", ";
-    std::cout << "ios 0x" << addrs.ios << ";\n";
+    std::cout << "ios 0x" << addrs.ios << " ";
+
+    if (!inner.empty()) {
+        std::cout << inner << "\n";
+    } else {
+        std::cout << ";\n";
+    }
+
     std::cout << std::dec;
 }
 
@@ -24,7 +31,7 @@ void print_ast(broma::Root& ast) {
         std::cout << "class " << cls.name << " {\n";
         for (auto field : cls.fields) {
             if (auto func = field.get_as<broma::FunctionBindField>()) {
-                print_func(func->prototype, func->binds);
+                print_func(func->prototype, func->binds, func->inner);
             }
         }
         std::cout << "};\n";

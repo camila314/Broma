@@ -144,12 +144,7 @@ namespace broma {
 	struct FunctionBindField {
 		MemberFunctionProto prototype;
 		PlatformNumber binds; ///< The offsets, separated per platform.
-	};
-
-	/// @brief An inline function body that should go in a source file (.cpp).
-	struct OutOfLineField {
-		MemberFunctionProto prototype;
-		std::string inner; ///< The inline body of the function as a raw string.
+		std::string inner; ///< The (optional) inline body of the function as a raw string.
 	};
 
 	/// @brief A inline function body that should go in a header file (.hpp).
@@ -161,7 +156,7 @@ namespace broma {
 	struct Field {
 		size_t field_id; ///< The index of the field. This starts from 0 and counts up across all classes.
 		std::string parent; ///< The name of the parent class.
-		std::variant<InlineField, OutOfLineField, FunctionBindField, PadField, MemberField> inner;
+		std::variant<InlineField, FunctionBindField, PadField, MemberField> inner;
 
 		/// @brief Cast the field into a variant type. This is useful to extract data from the field.
 		template <typename T>
@@ -177,9 +172,7 @@ namespace broma {
 
 		/// @brief Convenience function to get the function prototype of the field, if the field is a function of some sort.
 		inline MemberFunctionProto* get_fn() {
-			if (auto fn = get_as<OutOfLineField>()) {
-				return &fn->prototype;
-			} else if (auto fn = get_as<FunctionBindField>()) {
+			if (auto fn = get_as<FunctionBindField>()) {
 				return &fn->prototype;
 			} else return nullptr;
 		}

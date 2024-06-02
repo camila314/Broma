@@ -31,7 +31,7 @@ namespace broma {
 		}
 	};
 
-	struct field : sor<inline_expr, pad_expr, member_expr, bind_expr, ool_expr> {};
+	struct field : sor<inline_expr, pad_expr, member_expr, bind_expr> {};
 
 	template <>
 	struct run_action<field> {

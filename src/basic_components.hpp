@@ -79,6 +79,7 @@ namespace broma {
 	keyword(virtual);
 	keyword(callback);
 	keyword(inline);
+	keyword(default);
 	keyword(class);
 	keyword(struct);
 	keyword(unsigned);

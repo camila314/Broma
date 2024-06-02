@@ -3,7 +3,16 @@ class Test {
     int member(std::string str);
     int member2(std::string str);
     ///Woah
-    void thing(int a, int c) = win 0x0;
+
+    void bound_inline(int a, int c) = win 0x433, ios default {
+        return 44;
+    }
+
+    void thing(int c) = m1 0x4, win 0x5, mac 0x8, ios default;
+
+    void normal_inline(int b) {
+        return 32;
+    }
 
     mac, win {
         PAD = 0x5;
