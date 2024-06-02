@@ -16,7 +16,7 @@ namespace broma {
 				sep,
 				tagged_platform<bind>,
 				sep,
-				tagged_rule<bind, sor<hex, keyword_default>>
+				tagged_rule<bind, sor<hex, keyword_default, keyword_inline>>
 			>, one<','>>,
 			sep
 		>, sor<tagged_rule<bind, brace_start>, one<';'>>> {};
@@ -47,16 +47,21 @@ namespace broma {
 	};
 
 	template <>
-	struct run_action<tagged_rule<bind, sor<hex, keyword_default>>> {
+	struct run_action<tagged_rule<bind, sor<hex, keyword_default, keyword_inline>>> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
 			auto text = input.string();
 
 			std::size_t out = -1;
 			if (text == "default") {
-				// special internal constant
+				// special internal constant used for normalization
 				// feel free to increment if needed (it isn't exposed anywhere public)
 				out = -3;
+			} else if (text == "inline") {
+				// potential forwards compatibility
+				// if one platform has explicit inline then default should be not inline
+				out = -2;
+				scratch->wip_has_explicit_inline = true;
 			} else {
 				out = std::stoul(text, nullptr, 16);
 			}

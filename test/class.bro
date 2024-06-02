@@ -4,8 +4,12 @@ class Test {
     int member2(std::string str);
     ///Woah
 
-    void bound_inline(int a, int c) = win 0x433, ios default {
+    void bound_explicit_inline(int a, int c) = win 0x433, ios inline, imac default {
         return 44;
+    }
+
+    void bound_implicit_inline(int a, int c) = imac default, ios 0x5467 {
+        ;;;;;
     }
 
     void thing(int c) = m1 0x4, win 0x5, mac 0x8, ios default;

@@ -2,6 +2,20 @@
 #include <broma.hpp>
 #include <iostream>
 
+void print_special_constant(std::ptrdiff_t num) {
+    if (num == -1) {
+        std::cout << "default";
+        return;
+    }
+
+    if (num == -2) {
+        std::cout << "inline";
+        return;
+    }
+
+    std::cout << "0x" << num;
+}
+
 void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs, std::string inner = "") {
 
     std::cout << "\tmissing: " << (long)func.attributes.missing << "\n";
@@ -10,13 +24,24 @@ void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs, std::s
         std::cout << arg.first.name << " " << arg.second << ", ";
     }
     std::cout << ") = " << std::hex;
-    std::cout << "win 0x" << addrs.win << ", ";
-    std::cout << "imac 0x" << addrs.imac << ", ";
-    std::cout << "m1 0x" << addrs.m1 << ", ";
-    std::cout << "ios 0x" << addrs.ios << " ";
+
+    std::cout << "win ";
+    print_special_constant(addrs.win);
+    std::cout << ", ";
+
+    std::cout << "imac ";
+    print_special_constant(addrs.imac);
+    std::cout << ", ";
+
+    std::cout << "m1 ";
+    print_special_constant(addrs.m1);
+    std::cout << ", ";
+
+    std::cout << "ios ";
+    print_special_constant(addrs.ios);
 
     if (!inner.empty()) {
-        std::cout << inner << "\n";
+        std::cout << " " << inner << "\n";
     } else {
         std::cout << ";\n";
     }

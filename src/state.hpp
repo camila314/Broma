@@ -26,6 +26,7 @@ namespace broma {
 		MemberFunctionProto wip_mem_fn_proto;
 		Attributes wip_attributes;
 		std::string wip_fn_body;
+		bool wip_has_explicit_inline;
 		std::optional<Platform> wip_platform_block;
 
 		std::vector<tao::pegtl::parse_error> errors;

@@ -223,7 +223,7 @@ namespace broma {
 			// normalize platform bindings. this is probably not very efficient, but whatever
 			// should probably do lookahead lol
 
-			auto has_inline = !scratch->wip_fn_body.empty();
+			auto has_inline = !scratch->wip_fn_body.empty() && !scratch->wip_has_explicit_inline;
 			f.binds.android32 = normalizePlatformNumber(f.binds.android32, has_inline);
 			f.binds.android64 = normalizePlatformNumber(f.binds.android64, has_inline);
 			f.binds.imac = normalizePlatformNumber(f.binds.imac, has_inline);
@@ -233,7 +233,10 @@ namespace broma {
 
 			f.inner = scratch->wip_fn_body;
 			scratch->wip_field.inner = f;
+
+			// clear state (there's probably a better way to do this too)
 			scratch->wip_fn_body.clear();
+			scratch->wip_has_explicit_inline = false;
 		}
 	};
 } // namespace broma
