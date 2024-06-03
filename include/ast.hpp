@@ -11,14 +11,14 @@ namespace broma {
 	/// @brief The platform currently being processed in a bind statement.
 	enum class Platform {
 		None = 0,
-		Mac = 1,
 		Windows = 2,
-		Android = 4,
-		iOS = 8,
-		Android32 = 16 | 4, // includes Android
-		Android64 = 32 | 4, // includes Android
-		MacIntel = 64 | 1,
-		MacArm = 128 | 1,
+		iOS = 4,
+		Android32 = 8,
+		Android64 = 16,
+		Android = 16 | 8, // group for Android32 and Android64
+		MacIntel = 32,
+		MacArm = 64,
+		Mac = 64 | 32,  // group for MacIntel and MacArm
 	};
 
 	inline Platform str_to_platform(std::string const& str) {
