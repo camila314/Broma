@@ -4,25 +4,31 @@ class Test {
     int member2(std::string str);
     ///Woah
 
-    void bound_explicit_inline(int a, int c) = win 0x433, ios inline, imac default {
+    // result: win 0x433, ios inline, imac default, m1 default
+    void bound_explicit_inline(int a, int c) = win 0x433, ios inline {
         return 44;
     }
 
-    void bound_implicit_inline(int a, int c) = imac default, ios 0x5467 {
+    // result: win inline, imac default, m1 default, ios 0x5467
+    void bound_implicit_inline(int a, int c) = mac default, ios 0x5467 {
         ;;;;;
     }
 
-    void thing(int c) = m1 0x4, win 0x5, mac 0x8, ios default;
+    void thing(int c) = win 0x5, imac 0x8, m1 0x4, ios default;
 
+    // result: win inline, imac inline, m1 inline, ios inline
     void normal_inline(int b) {
         return 32;
     }
 
+    int m_testBegin;
+
     mac, win {
         PAD = 0x5;
-        int m_test;
+        int m_perPlatformTest;
     }
 
     PAD = mac 0x38, ios 0x984, win 0x1;
-    char m_test;
+    char m_testMain;
+    PAD = m1 0x53;
 }
