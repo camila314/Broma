@@ -117,6 +117,7 @@ namespace broma {
 					}
 				}
 			}
+			scratch->wip_attributes = Attributes();
 		}
 	};
 
