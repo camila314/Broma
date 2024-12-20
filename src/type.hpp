@@ -9,15 +9,19 @@ using namespace tao::pegtl;
 namespace broma {
 	/// @brief A C++ type declaration.
 	struct type_content : 
-		if_then_must<
-			pad_space<sor<keyword_const, keyword_struct>>,
+		if_then_else<
+			at<ellipsis>,
+			ellipsis,
+			if_then_must<
+				pad_space<sor<keyword_const, keyword_struct>>,
 
-			sor<pad_space<keyword_const>, pad_space<keyword_struct>, success>,
+				sor<pad_space<keyword_const>, pad_space<keyword_struct>, success>,
 
-			if_then_else<pad_space<keyword_unsigned>, opt<qualified>, qualified>,
+				if_then_else<pad_space<keyword_unsigned>, opt<qualified>, qualified>,
 
-			opt<rpad_space<keyword_const>>,
-			star<seq<sep, one<'&', '*'>>>
+				opt<rpad_space<keyword_const>>,
+				star<seq<sep, one<'&', '*'>>>
+			>
 		> {};
 
 	/// @brief A C++ type declaration, with starting whitespace.
