@@ -7,7 +7,7 @@ env:
 
 jobs:
   build-hdoc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Restore cached hdoc binary
         id: hdoc-cache
@@ -47,6 +47,12 @@ jobs:
         with:
           name: hdoc
           path: build/hdoc
+
+      - name: Setup tmate session
+        if: ${{ !cancelled() }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
   build:
     runs-on: ubuntu-latest
