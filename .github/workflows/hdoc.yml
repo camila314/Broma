@@ -1,6 +1,6 @@
 name: 'Generate Broma docs'
 
-on: [push, pull_request]
+on: [push]
 
 env:
   HDOC_VERSION: '1.4.1'
