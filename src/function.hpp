@@ -45,6 +45,20 @@ namespace broma {
 		}
 	};
 
+	inline std::ptrdiff_t normalizePlatformNumber(std::ptrdiff_t num, bool has_inline) {
+		// -1 = unspecified. if there's an inline, default to inlined constant
+		if (num == -1 && has_inline) {
+			return -2;
+		}
+
+		// -3 = explicit default, so it returns to unspecified after inline is applied
+		if (num == -3) {
+			return -1;
+		}
+
+		return num;
+	}
+
 	/// @brief A full function (prototype and bindings).
 	struct function : 
 		seq<rule_begin<function>, function_proto, sep, bind>
@@ -58,6 +72,25 @@ namespace broma {
 
 			Function f;
 			f.prototype = scratch->wip_fn_proto;
+			f.binds = scratch->wip_bind;
+
+			// normalize platform bindings. this is probably not very efficient, but whatever
+			// should probably do lookahead lol
+
+			auto has_inline = !scratch->wip_fn_body.empty() && !scratch->wip_has_explicit_inline;
+			f.binds.android32 = normalizePlatformNumber(f.binds.android32, has_inline);
+			f.binds.android64 = normalizePlatformNumber(f.binds.android64, has_inline);
+			f.binds.imac = normalizePlatformNumber(f.binds.imac, has_inline);
+			f.binds.m1 = normalizePlatformNumber(f.binds.m1, has_inline);
+			f.binds.ios = normalizePlatformNumber(f.binds.ios, has_inline);
+			f.binds.win = normalizePlatformNumber(f.binds.win, has_inline);
+
+			f.inner = scratch->wip_fn_body;
+
+			// clear state (there's probably a better way to do this too)
+			scratch->wip_fn_body.clear();
+			scratch->wip_has_explicit_inline = false;
+
 			root->functions.push_back(f);
 
 			scratch->wip_attributes = Attributes();
@@ -195,20 +228,6 @@ namespace broma {
 			scratch->wip_mem_fn_proto.is_callback = true;
 		}
 	};
-
-	std::ptrdiff_t normalizePlatformNumber(std::ptrdiff_t num, bool has_inline) {
-		// -1 = unspecified. if there's an inline, default to inlined constant
-		if (num == -1 && has_inline) {
-			return -2;
-		}
-
-		// -3 = explicit default, so it returns to unspecified after inline is applied
-		if (num == -3) {
-			return -1;
-		}
-
-		return num;
-	}
 
 	/// @brief An offset binding expression.
 	struct bind_expr : seq<member_function_proto, sep, bind> {};

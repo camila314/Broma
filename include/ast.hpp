@@ -198,6 +198,7 @@ namespace broma {
 	struct Function {
 		FunctionProto prototype; ///< The free function's signature.
 		PlatformNumber binds; ///< The offsets of free function, separated per platform.
+		std::string inner; ///< The (optional) inline body of the function as a raw string.
 	};
 
 	/// @brief Broma's root grammar (the root AST).
