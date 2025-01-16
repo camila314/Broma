@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21)
 project(Broma LANGUAGES C CXX)
 
 include(cmake/get_cpm.cmake)
