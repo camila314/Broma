@@ -7,7 +7,7 @@ env:
 
 jobs:
   build-hdoc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Restore cached hdoc binary
         id: hdoc-cache
@@ -49,7 +49,7 @@ jobs:
           path: build/hdoc
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-hdoc
     steps:
       - name: Checkout repo
