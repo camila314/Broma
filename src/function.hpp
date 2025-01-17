@@ -45,7 +45,7 @@ namespace broma {
 		}
 	};
 
-	inline std::ptrdiff_t normalizePlatformNumber(std::ptrdiff_t num, bool has_inline) {
+	constexpr inline std::ptrdiff_t normalize_platform_number(std::ptrdiff_t num, bool has_inline) {
 		// -1 = unspecified. if there's an inline, default to inlined constant
 		if (num == -1 && has_inline) {
 			return -2;
@@ -78,12 +78,12 @@ namespace broma {
 			// should probably do lookahead lol
 
 			auto has_inline = !scratch->wip_fn_body.empty() && !scratch->wip_has_explicit_inline;
-			f.binds.android32 = normalizePlatformNumber(f.binds.android32, has_inline);
-			f.binds.android64 = normalizePlatformNumber(f.binds.android64, has_inline);
-			f.binds.imac = normalizePlatformNumber(f.binds.imac, has_inline);
-			f.binds.m1 = normalizePlatformNumber(f.binds.m1, has_inline);
-			f.binds.ios = normalizePlatformNumber(f.binds.ios, has_inline);
-			f.binds.win = normalizePlatformNumber(f.binds.win, has_inline);
+			f.binds.android32 = normalize_platform_number(f.binds.android32, has_inline);
+			f.binds.android64 = normalize_platform_number(f.binds.android64, has_inline);
+			f.binds.imac = normalize_platform_number(f.binds.imac, has_inline);
+			f.binds.m1 = normalize_platform_number(f.binds.m1, has_inline);
+			f.binds.ios = normalize_platform_number(f.binds.ios, has_inline);
+			f.binds.win = normalize_platform_number(f.binds.win, has_inline);
 
 			f.inner = scratch->wip_fn_body;
 
@@ -244,12 +244,12 @@ namespace broma {
 			// should probably do lookahead lol
 
 			auto has_inline = !scratch->wip_fn_body.empty() && !scratch->wip_has_explicit_inline;
-			f.binds.android32 = normalizePlatformNumber(f.binds.android32, has_inline);
-			f.binds.android64 = normalizePlatformNumber(f.binds.android64, has_inline);
-			f.binds.imac = normalizePlatformNumber(f.binds.imac, has_inline);
-			f.binds.m1 = normalizePlatformNumber(f.binds.m1, has_inline);
-			f.binds.ios = normalizePlatformNumber(f.binds.ios, has_inline);
-			f.binds.win = normalizePlatformNumber(f.binds.win, has_inline);
+			f.binds.android32 = normalize_platform_number(f.binds.android32, has_inline);
+			f.binds.android64 = normalize_platform_number(f.binds.android64, has_inline);
+			f.binds.imac = normalize_platform_number(f.binds.imac, has_inline);
+			f.binds.m1 = normalize_platform_number(f.binds.m1, has_inline);
+			f.binds.ios = normalize_platform_number(f.binds.ios, has_inline);
+			f.binds.win = normalize_platform_number(f.binds.win, has_inline);
 
 			f.inner = scratch->wip_fn_body;
 			scratch->wip_field.inner = f;
