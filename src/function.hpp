@@ -96,12 +96,26 @@ namespace broma {
 			scratch->wip_attributes = Attributes();
 		}
 	};
+	template <>
+	struct run_action<keyword_protected> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_mem_fn_proto.access = AccessModifier::Protected;
+		}
+	};
+	template <>
+	struct run_action<keyword_private> {
+		template <typename T>
+		static void apply(T& input, Root* root, ScratchData* scratch) {
+			scratch->wip_mem_fn_proto.access = AccessModifier::Private;
+		}
+	};
 
 	/// @brief A member function prototype.
 	///
 	/// This allows some more qualifiers than the free function prototype.
 	struct member_function_proto :
-		seq<rule_begin<member_function_proto>, sep, opt<attribute>, sep, sor<
+		seq<rule_begin<member_function_proto>, sep, opt<attribute>, sep, opt<sor<keyword_protected, keyword_private>>, sep, sor<
 			// ctor, dtor
 			seq<
 				named_rule("structor", success),

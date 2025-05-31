@@ -113,6 +113,11 @@ void print_ast(broma::Root& ast) {
         std::cout << "class " << cls.name << " {\n";
         for (auto field : cls.fields) {
             if (auto func = field.get_as<broma::FunctionBindField>()) {
+                if (func->prototype.access == broma::AccessModifier::Protected) {
+                    std::cout << "Protected!!!\n";
+                } else {
+                    std::cout << "Not protected.\n";
+                }
                 print_func(func->prototype, func->binds, func->inner);
             } else if (auto member = field.get_as<broma::MemberField>()) {
                 print_member(member->name, member->platform, member->count);

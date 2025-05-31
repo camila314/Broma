@@ -1,7 +1,7 @@
 [[link(android)]]
 class Test {
     int member(std::string str);
-    int member2(std::string str);
+    protected int member2(std::string str);
     ///Woah
 
     // result: win 0x433, ios inline, imac default, m1 default
