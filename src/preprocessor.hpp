@@ -18,7 +18,11 @@ namespace broma {
 	struct run_action<include_name> {
 		template <typename T>
 		static void apply(T& input, Root* root, ScratchData* scratch) {
-			file_input<> file_input(input.string());
+			std::filesystem::path name = input.string();
+			if (!std::filesystem::exists(name))
+				name = scratch->include_path / name;
+
+			file_input<> file_input(name);
 
 			parse<root_grammar, broma::run_action>(file_input, root, scratch);
 		}

@@ -30,5 +30,6 @@ namespace broma {
 		std::optional<Platform> wip_platform_block;
 
 		std::vector<tao::pegtl::parse_error> errors;
+		const std::filesystem::path include_path;
 	};
 } // namespace broma
