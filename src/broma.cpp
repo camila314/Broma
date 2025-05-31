@@ -20,7 +20,8 @@ namespace broma {
 		file_input<> input(fname);
 
 		Root root;
-		ScratchData scratch;
+		ScratchData scratch { .include_path = std::filesystem::path(fname).parent_path() };
+
 		parse<must<root_grammar>, run_action>(input, &root, &scratch);
 		post_process(root);
 
