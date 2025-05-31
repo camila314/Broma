@@ -77,6 +77,7 @@ namespace broma {
 		Platform links = Platform::None; ///< All the platforms that link the class or function
 		Platform missing = Platform::None; ///< All the platforms that are missing the class or function
 		std::vector<std::string> depends; ///< List of classes that this class or function depends on
+		std::string since; ///< The SDK version that this class or function was introduced in
 	};
 
 	struct FunctionProto {

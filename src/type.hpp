@@ -7,6 +7,9 @@ using namespace tao::pegtl;
 #include "state.hpp"
 
 namespace broma {
+	/// @brief A C++ qualified identifier with the "long" keyword.
+	struct long_qualified : if_then_else<keyword_long, opt<rpad_space<keyword_long>>, opt<qualified>> {};
+
 	/// @brief A C++ type declaration.
 	struct type_content : 
 		if_then_else<
@@ -17,10 +20,11 @@ namespace broma {
 
 				sor<pad_space<keyword_const>, pad_space<keyword_struct>, success>,
 
-				if_then_else<pad_space<keyword_unsigned>, opt<qualified>, qualified>,
+				if_then_else<pad_space<keyword_unsigned>, opt<long_qualified>, long_qualified>,
 
 				opt<rpad_space<keyword_const>>,
-				star<seq<sep, one<'&', '*'>>>
+				star<seq<sep, one<'&', '*'>>>,
+				opt<rpad_space<keyword_const>>
 			>
 		> {};
 

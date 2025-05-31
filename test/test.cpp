@@ -19,6 +19,7 @@ void print_special_constant(std::ptrdiff_t num) {
 void print_func(broma::FunctionProto& func, broma::PlatformNumber& addrs, std::string inner = "") {
 
     std::cout << "\tmissing: " << (long)func.attributes.missing << "\n";
+    std::cout << "\tsince: " << func.attributes.since << "\n";
     std::cout << "\t" << func.ret.name << " " << func.name << "(";
     for (auto arg : func.args) {
         std::cout << arg.first.name << " " << arg.second << ", ";

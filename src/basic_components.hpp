@@ -92,6 +92,7 @@ namespace broma {
 	keyword(m1);
 	keyword(imac);
 	keyword(PAD);
+	keyword(long);
 
 	#undef keyword
 

@@ -21,6 +21,9 @@ class Test {
         return 32;
     }
 
+    [[since("v2.10.0-alpha.1")]]
+    void new_feature(int a, int b) = win 0x0, imac 0x24, m1 0x554, ios 0x343;
+
     int m_testBegin;
 
     mac, win {
