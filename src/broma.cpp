@@ -16,11 +16,11 @@ namespace broma {
 	/// @brief Broma's top-level grammar.
 	struct root_grammar : until<eof, sep, must<sor<include_expr, seq<opt<attribute>, sor<class_statement, function>>>>, sep> {};
 
-	Root parse_file(std::string const& fname) {
+	Root parse_file(std::filesystem::path const& fname) {
 		file_input<> input(fname);
 
 		Root root;
-		ScratchData scratch { .include_path = std::filesystem::path(fname).parent_path() };
+		ScratchData scratch { .include_path = fname.parent_path() };
 
 		parse<must<root_grammar>, run_action>(input, &root, &scratch);
 		post_process(root);
