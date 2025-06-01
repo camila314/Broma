@@ -108,9 +108,17 @@ namespace broma {
 		Dtor ///< A destructor.
 	};
 
+	/// @brief A member function's access modifier.
+	enum class AccessModifier {
+		Public,
+		Protected,
+		Private
+	};
+
 	/// @brief The signature of a member function.
 	struct MemberFunctionProto : FunctionProto {
 		FunctionType type = FunctionType::Normal;
+		AccessModifier access = AccessModifier::Public;
 		bool is_const = false;
 		bool is_virtual = false;
 		bool is_callback = false; ///< Whether or not this function is a callback.
